@@ -1,0 +1,4 @@
+/* Event details specific */
+.detail-demo__title {
+  /* already global h1, but we can override */
+}

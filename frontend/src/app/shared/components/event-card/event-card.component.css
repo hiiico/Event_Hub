@@ -1,0 +1,5 @@
+/* Any event-card specific adjustments */
+.event-card__image {
+  background-size: cover;
+  background-position: center;
+}

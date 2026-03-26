@@ -1,59 +1,97 @@
-# Frontend
+# EventHub – Frontend (Angular 17+)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.1.
+EventHub is a full‑stack web application for discovering and managing local events.  
+This repository contains the **Angular frontend** (standalone components) that consumes the Spring Boot REST API.
 
-## Development server
+---
 
-To start a local development server, run:
+## Table of Contents
 
-```bash
+- [Project Overview](#project-overview)
+- [Backend Structure](#backend-structure)
+- [Frontend Structure](#frontend-structure)
+- [Running the Application](#running-the-application)
+- [API Endpoints](#api-endpoints)
+- [Development Commands](#development-commands)
+- [Built With](#built-with)
+
+---
+
+## Project Overview
+
+- **Frontend**: Angular 17+ (standalone components) – built with TypeScript, RxJS, and custom CSS (BEM naming).
+- **Backend**: Spring Boot 3.2 with Spring Security, JWT authentication, and MongoDB Atlas.
+- **Database**: MongoDB Atlas (or local MongoDB) – data stored as JSON documents.
+
+The frontend provides:
+- Public pages: event catalog, event details, login, register.
+- Private pages: my events dashboard, event creation/editing, profile settings.
+- Interactive features: RSVP, commenting, search/filter, pagination.
+
+---
+
+## Backend Structure
+
+- The backend is located in the `backend/` folder.
+---
+## Frontend Structure
+
+The frontend is built with **Angular standalone components** (no NgModules).  
+- All source code is in `src/app/`.
+---
+
+## Running the Application
+Prerequisites
+- Node.js 18+ and npm
+- Java 17+ and Maven (for the backend)
+- MongoDB Atlas account (or local MongoDB)
+---
+### Start the Backend
+cd backend
+export MONGODB_USERNAME=your_db_username
+export MONGODB_PASSWORD=your_db_password
+./mvnw spring-boot:run
+The backend will start at http://localhost:3000.
+---
+### Start the Frontend
+cd ../frontend
+npm install
 ng serve
-```
+The frontend will be available at http://localhost:4200.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## API Endpoints
 
-## Code scaffolding
+- The frontend consumes the following REST endpoints (all prefixed with /api):
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+| Method | Endpoint	               | Description                  |   Auth Required   |
+|--------|-------------------------|------------------------------|:-----------------:|
+| POST   | /auth/register          | Register a new user          |        	No        |
+| POST   | /auth/login             | Login – returns JWT token	   |        No         |
+| GET    | /events                 | List events (paginated)      |        No         |
+| GET    | /events/{id}            | Get event details	           |        No         |
+| POST   | /events                 | Create a new event	          |        Yes        |
+| PUT	   | /events/{id}            | Update an event	             |    Yes (owner)    |
+| DELETE | /events/{id}            | Delete an event	             |    Yes (owner)    |
+| POST   | /events/{id}/rsvp       | Toggle RSVP status           |        Yes        |
+| GET	   | /events/user/created	   | Events created by the user   |        Yes        |
+| GET	   | /events/user/attending	 | Events the user is attending |        Yes        |
 
-```bash
-ng generate component component-name
-```
+## Development Commands
+| Command	                | Description                               |
+|-------------------------|-------------------------------------------|
+| ng serve	               | Start dev server at http://localhost:4200 |
+| ng build	               | Build the project (output in dist/)       |
+| ng test                 | 	Run unit tests (Vitest)                  |       
+| ng generate component x | 	Generate a new component                 |
+| ng generate service x	  | Generate a new service                    |
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Built With
+- Angular 17+ – standalone components, control flow syntax (@if, @for)
 
-```bash
-ng generate --help
-```
+- TypeScript – static typing
 
-## Building
+- RxJS – observables, operators (debounceTime, catchError)
 
-To build the project run:
+- CSS – custom styling with BEM methodology
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- Font Awesome – free icons (loaded from CDN)
