@@ -1,1 +1,32 @@
-<p>my-events-component works!</p>
+<div class="dashboard-header">
+  <h2><i class="fas fa-calendar-check" style="color: var(--accent);"></i> My events</h2>
+  <button class="btn btn--accent" routerLink="/events/create">
+    <i class="fas fa-plus"></i> Create new
+  </button>
+</div>
+
+<!-- Tab navigation (optional) -->
+<div class="tab-buttons">
+<!-- [class.active]="activeTab === 'created'" (click)="activeTab = 'created'" -->
+  <button class="btn">Events I created</button>
+<!-- [class.active]="activeTab === 'attending'" (click)="activeTab = 'attending'" -->
+  <button class="btn">Events I'm attending</button>
+</div>
+
+<!-- if activeTab = created -->
+  <div class="card-grid">
+
+<!--    list of createdEvents-->
+<!--  editEvent(event)  deleteEvent(event.id) -->
+      <app-event-card-component/>
+<!--  if empty  -->
+      <p>You haven't created any events yet. <a routerLink="/events/create">Create your first event</a></p>
+  </div>
+<!-- else -->
+  <div class="card-grid">
+<!--    list of attendingEvents-->
+<!--  cancelRsvp(event.id)  -->
+      <app-event-card-component/>
+<!--    if empty  -->
+      <p>You are not attending any events yet. <a routerLink="/events">Discover events</a></p>
+  </div>

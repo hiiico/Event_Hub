@@ -1,1 +1,29 @@
-<p>event-card-component works!</p>
+<!-- [class.event-card--manage]="showActions" -->
+<div class="event-card" >
+<!-- [style.backgroundImage]="'url(' + (event.imageUrl || '') + ')'"  -->
+  <div class="event-card__image" ></div>
+  <div class="event-card__content">
+    <div class="event-card__title">event title</div>
+    <div class="event-card__detail">
+      <i class="fas fa-calendar"></i>event dateTime | date:'mediumDate'
+    </div>
+    <div class="event-card__detail">
+      <i class="fas fa-map-pin"></i>event location
+    </div>
+    <div class="event-card__footer">
+      <span><i class="fas fa-users"></i>event attendeeCount  going</span>
+<!--      if showActions -->
+        <div>
+<!--    onEdit.emit(event)      -->
+          <i class="fas fa-edit"></i>
+<!--      onDelete.emit(event.id)    -->
+          <i class="fas fa-trash-alt" style="margin-left:1rem; color:#c0392b;"></i>
+        </div>
+<!--     else if (showRsvp) -->
+<!--   onCancelRsvp.emit(event.id   -->
+        <button class="btn btn--rsvp">Cancel RSVP</button>
+<!--     else  event.id-->
+        <a [routerLink]="['/events', ]" class="learn-more">Learn more →</a>
+    </div>
+  </div>
+</div>

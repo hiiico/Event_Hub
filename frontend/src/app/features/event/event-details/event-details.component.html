@@ -1,1 +1,69 @@
-<p>event-details-component works!</p>
+<section class="detail-demo">
+<!--  <h1 class="detail-demo__title">{{ event.title }}</h1>-->
+  <div class="detail-meta">
+    <span class="detail-meta__item">
+<!--      <i class="fas fa-calendar-day"></i> {{ event.dateTime | date:'fullDate' }} · {{ event.dateTime | date:'shortTime' }}-->
+    </span>
+    <span class="detail-meta__item">
+<!--      <i class="fas fa-location-dot"></i> {{ event.location }}-->
+    </span>
+    <span class="detail-meta__item">
+<!--      <i class="fas fa-user-friends"></i> Organiser: {{ event.organiser.name }}-->
+    </span>
+  </div>
+<!--  <p>{{ event.description }}</p>-->
+
+  <div style="display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; margin: 2rem 0;">
+    <div class="attendee-avatars">
+      <!-- Show first 3 attendee avatars -->
+<!--      @for (attendee of event.attendees | slice:0:3; track attendee.id) {-->
+<!--        <span class="avatar__circle">{{ attendee.name.charAt(0) }}</span>-->
+<!--      }-->
+<!--      @if (event.attendeeCount > 3) {-->
+<!--        <span class="avatar__circle">+{{ event.attendeeCount - 3 }}</span>-->
+<!--      }-->
+    </div>
+    <span>
+      <i class="fas fa-user-check" style="color: var(--rsvp-green);"></i>
+      <strong>event.attendeeCount  going</strong>
+    </span>
+<!--  toggleRsvp()  -->
+    <button class="btn btn--rsvp">
+<!--   if isAttending   -->
+        <i class="fas fa-check-circle"></i> Cancel RSVP
+<!--  else -->
+        <i class="fas fa-plus-circle"></i> RSVP
+    </button>
+  </div>
+
+  <!-- Comments section -->
+  <div class="comment-section">
+    <h3><i class="fas fa-comments"></i> Comments count</h3>
+<!--    list of event comments-->
+      <div class="comment">
+<!--    comment author name-->
+        <span class="avatar__circle">author name </span>
+        <div class="comment__bubble">
+          <strong>author name</strong>
+          <p>comment text</p>
+          <small>comment create dAt | date:'short' </small>
+        </div>
+      </div>
+<!--    if empty -->
+      <p>No comments yet. Be the first to comment!</p>
+
+<!--    if isAuthenticated() -->
+      <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+        <span class="avatar__circle" style="width:42px;">User name</span>
+        <input
+          type="text"
+          placeholder="Write a comment..."
+          style="flex:1 1 200px; border-radius: 3rem; border:1px solid var(--border-subtle); padding:0 1rem; min-width: 150px;"
+        />
+<!--    addComment()    -->
+        <button class="btn btn--primary">Post</button>
+      </div>
+<!--  else -->
+      <p><a href="/login">Log in</a> to leave a comment.</p>
+  </div>
+</section>

@@ -1,1 +1,28 @@
-<router-outlet />
+<nav class="navbar">
+  <div class="navbar__logo" routerLink="/">
+    <i class="fas fa-calendar-check"></i> EventHub
+  </div>
+  <div class="navbar__menu">
+    <a href="/events" class="navbar__link">Events</a>
+<!--    if user auth-->
+<!--      <a href="/my-events" class="navbar__link">My Events</a>-->
+<!--      <div class="avatar">-->
+<!--        <span class="avatar__circle">User</span>-->
+<!--        <i class="fas fa-chevron-down"></i>-->
+<!--      </div>-->
+<!--else-->
+      <a href="/login" class="navbar__link">Login</a>
+      <a href="/register" class="navbar__link">Register</a>
+
+  </div>
+  <div class="navbar__cta">
+<!--    if user auth-->
+<!--      <button class="btn btn&#45;&#45;accent">-->
+<!--        <i class="fas fa-plus-circle"></i> Create event-->
+<!--      </button>-->
+<!--      <button class="btn btn&#45;&#45;outline" >Logout</button>-->
+  </div>
+</nav>
+<main class="container">
+  <router-outlet></router-outlet>
+</main>

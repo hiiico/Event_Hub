@@ -1,1 +1,66 @@
-<p>event-catalog-component works!</p>
+<!-- Hero section -->
+<section class="hero">
+  <div class="hero__content">
+    <h1>Discover local events,<br>gather with friends.</h1>
+    <p>Find concerts, workshops, meetups – or create your own.</p>
+    <div class="search-bar">
+      <i class="fas fa-search"></i>
+      <input
+        type="text"
+        placeholder="Search by city or category..."
+      />
+      <button><i class="fas fa-arrow-right"></i></button>
+    </div>
+  </div>
+  <div class="hero__graphic">
+    <i class="fas fa-calendar-alt"></i>
+  </div>
+</section>
+
+<!-- Upcoming events (horizontal) -->
+<section>
+  <h2><i class="fas fa-clock" style="color: var(--accent);"></i> Upcoming near you</h2>
+  <div class="upcoming-scroll" style="display: flex; gap: 1.5rem; overflow-x: auto; padding-bottom: 1rem;">
+<!--    if upcoming event-card list-->
+    <app-event-card-component style="min-width: 260px; flex-shrink: 0;"/>
+<!--    else-->
+      <p>No upcoming events found.</p>
+  </div>
+</section>
+
+<!-- All events catalog -->
+<section>
+  <h2><i class="fas fa-list" style="color: var(--primary);"></i> All events</h2>
+  <div class="filter-bar">
+<!--  (click)="filterByDate('week')"  -->
+    <div class="filter-chip">
+      <i class="fas fa-calendar-alt"></i> Date:
+    </div>
+<!--  (click)="toggleCategoryFilter()  -->
+    <div class="filter-chip">
+      <i class="fas fa-tag"></i> Category: All
+    </div>
+    <!-- More filters can be added -->
+  </div>
+
+<!--  if loading -->
+<!--    <div class="loading-spinner">Loading events...</div>-->
+<!--  else -->
+    <div class="card-grid">
+<!-- list of event-card  -->
+      <app-event-card-component/>
+<!--       if empty -->
+        <p>No events found.</p>
+
+    </div>
+
+  <!-- Pagination controls (optional) -->
+<!-- if totalPages > 1-->
+  <div class="pagination">
+<!--    previousPage() -->
+    <button class="btn btn--outline">Previous</button>
+    <span>Page [currentPage] of  totalPages </span>
+<!--  nextPage()  -->
+    <button class="btn btn--outline">Next</button>
+  </div>
+</section>
