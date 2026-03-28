@@ -5,28 +5,46 @@
   </button>
 </div>
 
-<!-- Tab navigation (optional) -->
 <div class="tab-buttons">
-<!-- [class.active]="activeTab === 'created'" (click)="activeTab = 'created'" -->
-  <button class="btn">Events I created</button>
-<!-- [class.active]="activeTab === 'attending'" (click)="activeTab = 'attending'" -->
-  <button class="btn">Events I'm attending</button>
+  <button class="btn" [class.active]="activeTab === 'created'" (click)="activeTab = 'created'">Events I created</button>
+  <button class="btn" [class.active]="activeTab === 'attending'" (click)="activeTab = 'attending'">Events I'm attending</button>
 </div>
 
-<!-- if activeTab = created -->
-  <div class="card-grid">
-
-<!--    list of createdEvents-->
-<!--  editEvent(event)  deleteEvent(event.id) -->
-      <app-event-card-component/>
-<!--  if empty  -->
-      <p>You haven't created any events yet. <a routerLink="/events/create">Create your first event</a></p>
-  </div>
-<!-- else -->
-  <div class="card-grid">
-<!--    list of attendingEvents-->
-<!--  cancelRsvp(event.id)  -->
-      <app-event-card-component/>
-<!--    if empty  -->
-      <p>You are not attending any events yet. <a routerLink="/events">Discover events</a></p>
-  </div>
+@if (activeTab === 'created') {
+  @if (loadingCreated) {
+    <div class="loading-spinner">Loading your events...</div>
+  } @else if (errorCreated) {
+    <div class="error-message">Failed to load your events. Please try again.</div>
+  } @else {
+    <div class="card-grid">
+      @for (event of createdEvents; track event.id) {
+        <app-event-card
+          [event]="event"
+          [showActions]="true"
+          (edit)="editEvent(event)"
+          (delete)="deleteEvent(event.id)"
+        ></app-event-card>
+      } @empty {
+        <p>You haven't created any events yet. <a routerLink="/events/create">Create your first event</a></p>
+      }
+    </div>
+  }
+} @else {
+  @if (loadingAttending) {
+    <div class="loading-spinner">Loading events...</div>
+  } @else if (errorAttending) {
+    <div class="error-message">Failed to load events. Please try again.</div>
+  } @else {
+    <div class="card-grid">
+      @for (event of attendingEvents; track event.id) {
+        <app-event-card
+          [event]="event"
+          [showRsvp]="true"
+          (cancelRsvp)="cancelRsvp(event.id)"
+        ></app-event-card>
+      } @empty {
+        <p>You are not attending any events yet. <a routerLink="/events">Discover events</a></p>
+      }
+    </div>
+  }
+}

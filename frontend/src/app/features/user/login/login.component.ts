@@ -1,10 +1,26 @@
 import { Component } from '@angular/core';
-import {RouterLink} from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth/auth.service';
 
 @Component({
-  selector: 'app-login-component',
-  imports: [RouterLink],
+  selector: 'app-login',
+  standalone: true,
+  imports: [FormsModule, RouterLink],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css',
+  styleUrls: ['./login.component.css']
 })
-export class LoginComponent {}
+export class LoginComponent {
+  email = '';
+  password = '';
+  error = '';
+
+  constructor(private authService: AuthService, private router: Router) {}
+
+  onSubmit() {
+    this.authService.login(this.email, this.password).subscribe({
+      next: () => this.router.navigate(['/events']),
+      error: () => this.error = 'Invalid credentials'
+    });
+  }
+}

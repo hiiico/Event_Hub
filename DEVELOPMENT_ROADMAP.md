@@ -120,9 +120,9 @@ The application meets all requirements described in `project_requirements.pdf` a
 │   │       │   │       ├── event-card.component.html
 │   │       │   │       └── event-card.component.css
 │   │       │   ├── models/
-│   │       │   │   ├── user.model.ts
-│   │       │   │   ├── event.model.ts
-│   │       │   │   └── comment.model.ts
+│   │       │   │   ├── user.ts
+│   │       │   │   ├── event.ts
+│   │       │   │   └── comment.ts
 │   │       │   └── pipes/            # (optional, empty)
 │   │       └── features/
 │   │           ├── event/

@@ -8,6 +8,8 @@
       <input
         type="text"
         placeholder="Search by city or category..."
+        [ngModel]="searchTerm"
+        (ngModelChange)="onSearch($event)"
       />
       <button><i class="fas fa-arrow-right"></i></button>
     </div>
@@ -21,10 +23,11 @@
 <section>
   <h2><i class="fas fa-clock" style="color: var(--accent);"></i> Upcoming near you</h2>
   <div class="upcoming-scroll" style="display: flex; gap: 1.5rem; overflow-x: auto; padding-bottom: 1rem;">
-<!--    if upcoming event-card list-->
-    <app-event-card-component style="min-width: 260px; flex-shrink: 0;"/>
-<!--    else-->
+    @for (event of upcomingEvents; track event.id) {
+      <app-event-card [event]="event" style="min-width: 260px; flex-shrink: 0;"></app-event-card>
+    } @empty {
       <p>No upcoming events found.</p>
+    }
   </div>
 </section>
 
@@ -32,35 +35,33 @@
 <section>
   <h2><i class="fas fa-list" style="color: var(--primary);"></i> All events</h2>
   <div class="filter-bar">
-<!--  (click)="filterByDate('week')"  -->
-    <div class="filter-chip">
-      <i class="fas fa-calendar-alt"></i> Date:
+    <div class="filter-chip" (click)="filterByDate('week')">
+      <i class="fas fa-calendar-alt"></i> Date: {{ dateFilterLabel }}
     </div>
-<!--  (click)="toggleCategoryFilter()  -->
-    <div class="filter-chip">
-      <i class="fas fa-tag"></i> Category: All
+    <div class="filter-chip" (click)="toggleCategoryFilter()">
+      <i class="fas fa-tag"></i> Category: {{ categoryFilter || 'all' }}
     </div>
-    <!-- More filters can be added -->
   </div>
 
-<!--  if loading -->
-<!--    <div class="loading-spinner">Loading events...</div>-->
-<!--  else -->
+  @if (loading) {
+    <div class="loading-spinner">Loading events...</div>
+  } @else if (error) {
+    <div class="error-message">Failed to load events. Please try again later.</div>
+  } @else {
     <div class="card-grid">
-<!-- list of event-card  -->
-      <app-event-card-component/>
-<!--       if empty -->
+      @for (event of paginatedEvents; track event.id) {
+        <app-event-card [event]="event"></app-event-card>
+      } @empty {
         <p>No events found.</p>
-
+      }
     </div>
+  }
 
-  <!-- Pagination controls (optional) -->
-<!-- if totalPages > 1-->
-  <div class="pagination">
-<!--    previousPage() -->
-    <button class="btn btn--outline">Previous</button>
-    <span>Page [currentPage] of  totalPages </span>
-<!--  nextPage()  -->
-    <button class="btn btn--outline">Next</button>
-  </div>
+  @if (totalPages > 1 && !loading && !error) {
+    <div class="pagination">
+      <button class="btn btn--outline" (click)="previousPage()" [disabled]="currentPage === 0">Previous</button>
+      <span>Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+      <button class="btn btn--outline" (click)="nextPage()" [disabled]="currentPage === totalPages - 1">Next</button>
+    </div>
+  }
 </section>

@@ -3,24 +3,25 @@
     <i class="fas fa-calendar-check"></i> EventHub
   </div>
   <div class="navbar__menu">
-    <a href="/events" class="navbar__link">Events</a>
-<!--    if user auth-->
-<!--      <a href="/my-events" class="navbar__link">My Events</a>-->
-<!--      <div class="avatar">-->
-<!--        <span class="avatar__circle">User</span>-->
-<!--        <i class="fas fa-chevron-down"></i>-->
-<!--      </div>-->
-<!--else-->
-      <a href="/login" class="navbar__link">Login</a>
-      <a href="/register" class="navbar__link">Register</a>
-
+    <a routerLink="/events" class="navbar__link">Events</a>
+    @if (authService.isAuthenticated()) {
+      <a routerLink="/my-events" class="navbar__link">My Events</a>
+      <div class="avatar">
+        <span class="avatar__circle">{{ (authService.user$ | async)?.name?.charAt(0) || 'U' }}</span>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+    } @else {
+      <a routerLink="/login" class="navbar__link">Login</a>
+      <a routerLink="/register" class="navbar__link">Register</a>
+    }
   </div>
   <div class="navbar__cta">
-<!--    if user auth-->
-<!--      <button class="btn btn&#45;&#45;accent">-->
-<!--        <i class="fas fa-plus-circle"></i> Create event-->
-<!--      </button>-->
-<!--      <button class="btn btn&#45;&#45;outline" >Logout</button>-->
+    @if (authService.isAuthenticated()) {
+      <button class="btn btn--accent" routerLink="/events/create">
+        <i class="fas fa-plus-circle"></i> Create event
+      </button>
+      <button class="btn btn--outline" (click)="logout()">Logout</button>
+    }
   </div>
 </nav>
 <main class="container">

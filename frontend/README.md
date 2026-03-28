@@ -67,9 +67,9 @@ The frontend provides:
 │   │       │   │       ├── event-card.component.html
 │   │       │   │       └── event-card.component.css
 │   │       │   ├── models/
-│   │       │   │   ├── user.model.ts
-│   │       │   │   ├── event.model.ts
-│   │       │   │   └── comment.model.ts
+│   │       │   │   ├── user.ts
+│   │       │   │   ├── event.ts
+│   │       │   │   └── comment.ts
 │   │       │   └── pipes/            # (optional, empty)
 │   │       └── features/
 │   │           ├── event/

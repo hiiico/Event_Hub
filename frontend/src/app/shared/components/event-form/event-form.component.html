@@ -1,0 +1,44 @@
+<div class="form-card">
+  <form (ngSubmit)="onSubmit()">
+    <div class="input-group">
+      <label>Title</label>
+      <input type="text" [(ngModel)]="event.title" name="title" required>
+    </div>
+    <div class="input-group">
+      <label>Description</label>
+      <textarea rows="4" [(ngModel)]="event.description" name="description"></textarea>
+    </div>
+    <div class="input-group">
+      <label>Date & Time</label>
+      <input type="datetime-local" [(ngModel)]="event.dateTime" name="dateTime" required>
+    </div>
+    <div class="input-group">
+      <label>Location</label>
+      <input type="text" [(ngModel)]="event.location" name="location" required>
+    </div>
+    <div class="input-group">
+      <label>Category</label>
+      <select [(ngModel)]="event.category" name="category">
+        <option value="">Select a category</option>
+        <option>Music</option>
+        <option>Tech</option>
+        <option>Art</option>
+        <option>Food</option>
+        <option>Sports</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    @if (error) {
+      <div class="error">{{ error }}</div>
+    }
+
+    <button type="submit" class="btn btn--accent" [disabled]="loading" style="width:100%; justify-content:center;">
+      @if (loading) {
+        Saving...
+      } @else {
+        {{ buttonLabel }}
+      }
+    </button>
+  </form>
+</div>

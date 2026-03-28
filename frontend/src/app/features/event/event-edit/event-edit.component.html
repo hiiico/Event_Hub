@@ -1,1 +1,16 @@
-<p>event-edit-component works!</p>
+@if (loading) {
+  <div class="loading-spinner">Loading event...</div>
+} @else if (error) {
+  <div class="error-message">
+    {{ error }} <a routerLink="/my-events">Back to my events</a>
+  </div>
+} @else {
+  <h2>Edit Event</h2>
+  <app-event-form
+    [event]="event"
+    buttonLabel="Save Changes"
+    [loading]="saving"
+    [error]="error"
+    (submit)="onSubmit()"
+  ></app-event-form>
+}

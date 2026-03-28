@@ -1,1 +1,8 @@
-<p>event-create-component works!</p>
+<h2>Create New Event</h2>
+<app-event-form
+  [event]="event"
+  buttonLabel="Create Event"
+  [loading]="loading"
+  [error]="error"
+  (submit)="onSubmit()"
+></app-event-form>
