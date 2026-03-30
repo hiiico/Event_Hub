@@ -20,11 +20,26 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<UserDto> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        UserDto dto = new UserDto();
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        return ResponseEntity.ok(dto);
+    }
+
     @PutMapping("/me")
     public ResponseEntity<UserDto> updateCurrentUser(@AuthenticationPrincipal UserDetails userDetails,
                                                      @Valid @RequestBody UserUpdateRequest request) {
+        System.out.println("=== UPDATE USER ===");
+        System.out.println("Request: name=" + request.getName() + ", email=" + request.getEmail());
+
         User user = userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        System.out.println("Current user: id=" + user.getId() + ", name=" + user.getName() + ", email=" + user.getEmail());
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         userRepository.save(user);
@@ -32,6 +47,7 @@ public class UserController {
         dto.setId(user.getId());
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
+        System.out.println("Updated user: " + dto);
         return ResponseEntity.ok(dto);
     }
 }

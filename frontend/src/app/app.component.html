@@ -6,10 +6,10 @@
     <a routerLink="/events" class="navbar__link">Events</a>
     @if (authService.isAuthenticated()) {
       <a routerLink="/my-events" class="navbar__link">My Events</a>
-      <div class="avatar">
+      <a routerLink="/profile" class="avatar">
         <span class="avatar__circle">{{ (authService.user$ | async)?.name?.charAt(0) || 'U' }}</span>
-        <i class="fas fa-chevron-down"></i>
-      </div>
+        <span>Profile</span>
+      </a>
     } @else {
       <a routerLink="/login" class="navbar__link">Login</a>
       <a routerLink="/register" class="navbar__link">Register</a>

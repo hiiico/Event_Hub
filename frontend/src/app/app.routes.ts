@@ -3,7 +3,7 @@ import {LoginComponent} from './features/user/login/login.component';
 import {RegisterComponent} from './features/user/register/register.component';
 import {EventDetailsComponent} from './features/event/event-details/event-details.component';
 import {MyEventsComponent} from './features/user/my-events/my-events.component';
-import {EventCreateComponent} from './features/event/event-create/event-create.component';
+import EventCreateComponent from './features/event/event-create/event-create.component';
 import {EventEditComponent} from './features/event/event-edit/event-edit.component';
 import {ProfileComponent} from './features/user/profile/profile.component';
 import {Home} from './features/home/home';
@@ -19,7 +19,6 @@ export const routes: Routes = [
   { path: 'events', component: EventCatalogComponent },
   { path: 'events/create' , component: EventCreateComponent, canActivate: [authGuard]},
   { path: 'events/edit/:id' , component: EventEditComponent, canActivate: [authGuard]},
-  // { path: 'event/:id', component: EventDetailsComponent},
   { path: 'events/:id', component: EventDetailsComponent},
   { path: 'my-events', component: MyEventsComponent, canActivate: [authGuard]},
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard]},

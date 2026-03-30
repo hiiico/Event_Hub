@@ -67,3 +67,8 @@
     justify-content: center;
   }
 }
+
+.avatar {
+  text-decoration: none;
+  color: inherit;
+}

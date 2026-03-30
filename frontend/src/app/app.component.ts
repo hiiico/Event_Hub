@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink } from '@angular/router';
+import {Component, inject} from '@angular/core';
+import {RouterOutlet, RouterLink, Router} from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import { AuthService } from './core/services/auth/auth.service';
 
@@ -11,9 +11,11 @@ import { AuthService } from './core/services/auth/auth.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  private router = inject(Router);
   constructor(public authService: AuthService) {}
 
   logout() {
     this.authService.logout();
+    this.router.navigate(['/events']);
   }
 }

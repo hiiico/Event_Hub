@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Event } from '../../../shared/interfaces/event';
+import { Comment } from '../../../shared/interfaces/comment';
 
 @Injectable({ providedIn: 'root' })
 export class EventService {
@@ -18,7 +19,15 @@ export class EventService {
     return this.http.get<Event>(`${this.apiUrl}/${id}`);
   }
 
-  createEvent(event: Partial<Event>): Observable<Event> {
+    createEvent(event: {
+        title: string;
+        description: string;
+        dateTime: string;
+        location: string;
+        category: string;
+        latitude: number | null;
+        longitude: number | null
+    }): Observable<Event> {
     return this.http.post<Event>(this.apiUrl, event);
   }
 
@@ -31,6 +40,7 @@ export class EventService {
   }
 
   rsvpEvent(id: string): Observable<void> {
+    console.log('RSVP API call for event:', id);
     return this.http.post<void>(`${this.apiUrl}/${id}/rsvp`, {});
   }
 
@@ -42,5 +52,9 @@ export class EventService {
   getMyAttendingEvents(page: number = 0, size: number = 10): Observable<any> {
     const params = new HttpParams().set('page', page).set('size', size);
     return this.http.get<any>(`${this.apiUrl}/user/attending`, { params });
+  }
+
+  addComment(eventId: string, text: string): Observable<Comment> {
+    return this.http.post<Comment>(`${this.apiUrl}/${eventId}/comments`, { text });
   }
 }

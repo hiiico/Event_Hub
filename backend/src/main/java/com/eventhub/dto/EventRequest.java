@@ -15,4 +15,6 @@ public class EventRequest {
     @NotBlank
     private String location;
     private String category;
+    private Double latitude;
+    private Double longitude;
 }

@@ -24,6 +24,8 @@ public class Event {
     private LocalDateTime dateTime;
     private String location;
     private String category;
+    private Double latitude;
+    private Double longitude;
 
     @DBRef
     private User organiser;
@@ -33,4 +35,6 @@ public class Event {
 
     @DBRef
     private List<Comment> comments = new ArrayList<>();
+
+
 }

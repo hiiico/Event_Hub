@@ -15,4 +15,6 @@ public class EventResponse {
     private UserDto organiser;
     private Integer attendeeCount;
     private Set<CommentDto> comments;
+    private Double latitude;
+    private Double longitude;
 }

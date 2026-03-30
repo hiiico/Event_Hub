@@ -11,4 +11,6 @@ export interface Event {
   organiser: User;
   attendeeCount: number;
   comments?: Comment[];
+  latitude?: number | null;  // Add optional coordinates
+  longitude?: number | null;
 }
