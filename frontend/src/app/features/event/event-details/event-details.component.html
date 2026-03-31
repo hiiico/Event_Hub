@@ -1,65 +1,20 @@
-@if (loading) {
-  <div class="loading-spinner">Loading event...</div>
-} @else if (error) {
-  <div class="error-message">
-    Failed to load event. <a routerLink="/events">Browse events</a>
-  </div>
-} @else {
+@if (loading) { <div class="loading-spinner">Loading event...</div> }
+@else if (error) { <div class="error-message">Failed to load event. <a routerLink="/events">Browse events</a></div> }
+@else {
   <section class="detail-demo">
-    <h1 class="detail-demo__title">{{ event!.title }}</h1>
+    <h1>{{ event!.title }}</h1>
     <div class="detail-meta">
-      <span class="detail-meta__item">
-        <i class="fas fa-calendar-day"></i> {{ event!.dateTime | date:'fullDate' }} · {{ event!.dateTime | date:'shortTime' }}
-      </span>
-      <span class="detail-meta__item">
-        <i class="fas fa-location-dot"></i> {{ event!.location }}
-      </span>
-      <span class="detail-meta__item">
-        <i class="fas fa-user-friends"></i> Organiser: {{ event!.organiser.name }}
-      </span>
+      <span><i class="fas fa-calendar-day"></i> {{ event!.dateTime | date:'fullDate' }} · {{ event!.dateTime | date:'shortTime' }}</span>
+      <span><i class="fas fa-location-dot"></i> {{ event!.location }}</span>
+      <span><i class="fas fa-user-friends"></i> Organiser: {{ event!.organiser.name }}</span>
     </div>
     <p>{{ event!.description }}</p>
-
-    <div style="display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; margin: 2rem 0;">
-      <span><i class="fas fa-user-check" style="color: var(--rsvp-green);"></i> <strong>{{ event!.attendeeCount }} going</strong></span>
+    <div class="rsvp-area">
+      <span><i class="fas fa-user-check"></i> <strong>{{ event!.attendeeCount }} going</strong></span>
       <button class="btn btn--rsvp" (click)="toggleRsvp()" [disabled]="rsvpLoading">
-        @if (isAttending) {
-          <i class="fas fa-check-circle"></i> Cancel RSVP
-        } @else {
-          <i class="fas fa-plus-circle"></i> RSVP
-        }
+        @if (isAttending) { Cancel RSVP } @else { RSVP }
       </button>
     </div>
-
-    <div class="comment-section">
-      <h3><i class="fas fa-comments"></i> Comments ({{ event!.comments?.length || 0 }})</h3>
-      @for (comment of event!.comments; track comment.id) {
-        <div class="comment">
-          <span class="avatar__circle">{{ comment.author.name.charAt(0) }}</span>
-          <div class="comment__bubble">
-            <strong>{{ comment.author.name }}</strong>
-            <p>{{ comment.text }}</p>
-            <small>{{ comment.createdAt | date:'short' }}</small>
-          </div>
-        </div>
-      } @empty {
-        <p>No comments yet. Be the first to comment!</p>
-      }
-
-      @if (authService.isAuthenticated()) {
-        <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
-          <span class="avatar__circle" style="width:42px;">{{ (authService.user$ | async)?.name?.charAt(0) || 'U' }}</span>
-          <input
-            type="text"
-            placeholder="Write a comment..."
-            [(ngModel)]="newComment"
-            style="flex:1 1 200px; border-radius: 3rem; border:1px solid var(--border-subtle); padding:0 1rem; min-width: 150px;"
-          />
-          <button class="btn btn--primary" (click)="addComment()" [disabled]="!newComment.trim()">Post</button>
-        </div>
-      } @else {
-        <p><a routerLink="/login">Log in</a> to leave a comment.</p>
-      }
-    </div>
+    <app-comment-section [comments]="event!.comments || []" [eventId]="event!.id" (commentAdded)="onCommentAdded($event)"></app-comment-section>
   </section>
 }

@@ -1,9 +1,10 @@
 package com.eventhub.controller;
 
-import com.eventhub.dto.EventRequest;
-import com.eventhub.dto.EventResponse;
+import com.eventhub.dto.*;
+import com.eventhub.model.Comment;
 import com.eventhub.repository.UserRepository;
 import com.eventhub.service.EventService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -76,6 +77,30 @@ public class EventController {
                                                                     @AuthenticationPrincipal UserDetails userDetails) {
         String userId = getUserIdFromPrincipal(userDetails);
         return ResponseEntity.ok(eventService.getEventsAttending(userId, pageable));
+    }
+
+    @PostMapping("/{id}/comments")
+    public ResponseEntity<CommentDto> addComment(@PathVariable String id,
+                                                 @Valid @RequestBody CommentRequest request,
+                                                 @AuthenticationPrincipal UserDetails userDetails) {
+        String userId = getUserIdFromPrincipal(userDetails);
+        Comment comment = eventService.addComment(id, request.getText(), userId);
+        return ResponseEntity.ok(convertToCommentDto(comment));
+    }
+
+    private CommentDto convertToCommentDto(Comment comment) {
+        CommentDto dto = new CommentDto();
+        dto.setId(comment.getId());
+        dto.setText(comment.getText());
+        dto.setCreatedAt(comment.getCreatedAt());
+
+        UserDto authorDto = new UserDto();
+        authorDto.setId(comment.getAuthor().getId());
+        authorDto.setName(comment.getAuthor().getName());
+        authorDto.setEmail(comment.getAuthor().getEmail());
+        dto.setAuthor(authorDto);
+
+        return dto;
     }
 
     private String getUserIdFromPrincipal(UserDetails userDetails) {

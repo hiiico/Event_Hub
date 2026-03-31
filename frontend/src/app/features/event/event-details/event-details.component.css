@@ -1,4 +1,24 @@
-/* EventService details specific */
-.detail-demo__title {
-  /* already global h1, but we can override */
+.detail-demo {
+  background: white;
+  border-radius: 2rem;
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+  margin: 2rem 0;
+}
+.detail-meta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+}
+.detail-meta span {
+  background: var(--bg-light);
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+}
+.rsvp-area {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin: 2rem 0;
 }

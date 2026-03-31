@@ -1,6 +1,81 @@
-.upcoming-scroll {
+.horizontal-scroll {
   display: flex;
   gap: 1.5rem;
   overflow-x: auto;
   padding-bottom: 1rem;
+  scrollbar-width: thin;
+}
+.horizontal-scroll::-webkit-scrollbar { height: 6px; }
+.horizontal-scroll::-webkit-scrollbar-track { background: var(--border-subtle); border-radius: 3px; }
+.horizontal-scroll::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 3px; }
+.scroll-card { min-width: 260px; flex-shrink: 0; }
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 2rem;
+  margin: 2rem 0;
+}
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.location-buttons { display: flex; gap: 0.5rem; }
+.filter-bar {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.filter-chip {
+  background: white;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3rem;
+  padding: 0.4rem 1.2rem;
+  cursor: pointer;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.date-picker-card {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  padding: 0.5rem 1rem;
+  border-radius: 3rem;
+  box-shadow: var(--shadow-sm);
+  width: 220px;
+  justify-content: center;
+}
+
+.date-picker-card i {
+  font-size: 1.2rem;
+  color: var(--accent);
+}
+
+.date-picker-card input {
+  border: none;
+  padding: 0.3rem 0;
+  background: transparent;
+  font-size: 0.9rem;
+  outline: none;
+  width: 100%;
+}
+
+.date-picker-card .btn--link {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 0.8rem;
+  text-decoration: underline;
+  white-space: nowrap;
 }

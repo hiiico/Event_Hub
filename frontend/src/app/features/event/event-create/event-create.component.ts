@@ -8,15 +8,17 @@ import { EventFormComponent } from '../../../shared/components/event-form/event-
   standalone: true,
   imports: [EventFormComponent],
   templateUrl: './event-create.component.html',
-  styleUrls: ['./event-create.component.css']
+  styleUrls: ['./event-create.component.css'],
 })
-export class EventCreateComponent {
+class EventCreateComponent {
   event = {
     title: '',
     description: '',
     dateTime: '',
     location: '',
-    category: ''
+    category: '',
+    latitude: null as number | null,
+    longitude: null as number | null
   };
   loading = false;
   error = '';
@@ -24,16 +26,27 @@ export class EventCreateComponent {
   constructor(private eventService: EventService, private router: Router) {}
 
   onSubmit() {
+
+    if (this.loading) {
+      console.log('Already submitting, ignoring...');
+      return;
+    }
+    console.log('📤 CreateComponent – event before send:', this.event);
+
     this.loading = true;
-    this.error = '';
+    console.log('Submitting event creation...');
     this.eventService.createEvent(this.event).subscribe({
       next: (created) => {
+        console.log('✅ Event created:', created);
         this.router.navigate(['/events', created.id]);
       },
-      error: () => {
+      error: (err) => {
+        console.error('❌ Creation failed:', err);
         this.error = 'Failed to create event';
         this.loading = false;
       }
     });
   }
 }
+
+export default EventCreateComponent

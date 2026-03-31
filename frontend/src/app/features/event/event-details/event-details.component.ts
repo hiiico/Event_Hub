@@ -4,12 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { EventService } from '../../../core/services/event/event.service';
 import { AuthService } from '../../../core/services/auth/auth.service';
+import { CommentSectionComponent } from '../../../shared/components/comment-section/comment-section.component';
 import { Event } from '../../../shared/interfaces/event';
+import { Comment } from '../../../shared/interfaces/comment';
 
 @Component({
   selector: 'app-event-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, CommentSectionComponent],
   templateUrl: './event-details.component.html',
   styleUrls: ['./event-details.component.css']
 })
@@ -17,7 +19,6 @@ export class EventDetailsComponent implements OnInit {
   event: Event | null = null;
   isAttending = false;
   rsvpLoading = false;
-  newComment = '';
   loading = true;
   error = false;
 
@@ -28,31 +29,22 @@ export class EventDetailsComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.loadEvent(id);
-    } else {
-      this.loading = false;
-      this.error = true;
-      this.cdr.detectChanges();
-    }
+    if (id) this.loadEvent(id);
+    else { this.error = true; this.loading = false; }
   }
 
   loadEvent(id: string) {
     this.eventService.getEventById(id).subscribe({
       next: (event) => {
         this.event = event;
-        // TODO: Check if user is attending (requires current user ID)
+        // TODO: check if current user is attending (needs user id from token)
         this.isAttending = false;
         this.loading = false;
         this.cdr.detectChanges();
       },
-      error: () => {
-        this.error = true;
-        this.loading = false;
-        this.cdr.detectChanges();
-      }
+      error: () => { this.error = true; this.loading = false; this.cdr.detectChanges(); }
     });
   }
 
@@ -62,24 +54,18 @@ export class EventDetailsComponent implements OnInit {
     this.eventService.rsvpEvent(this.event.id).subscribe({
       next: () => {
         this.isAttending = !this.isAttending;
-        if (this.event) {
-          this.event.attendeeCount += this.isAttending ? 1 : -1;
-        }
+        if (this.event) this.event.attendeeCount += this.isAttending ? 1 : -1;
         this.rsvpLoading = false;
         this.cdr.detectChanges();
       },
-      error: () => {
-        this.rsvpLoading = false;
-        this.cdr.detectChanges();
-      }
+      error: () => { this.rsvpLoading = false; }
     });
   }
 
-  addComment() {
-    if (!this.event || !this.newComment.trim()) return;
-    // TODO: implement comment endpoint
-    alert('Comment feature coming soon');
-    this.newComment = '';
+  onCommentAdded(comment: Comment) {
+    if (!this.event) return;
+    if (!this.event.comments) this.event.comments = [];
+    this.event.comments.push(comment);
     this.cdr.detectChanges();
   }
 }

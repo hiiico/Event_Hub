@@ -1,0 +1,45 @@
+<div class="comment-section">
+  <h3><i class="fas fa-comments"></i> Comments ({{ comments.length }})</h3>
+
+  @if (comments.length === 0) {
+    <p>No comments yet. Be the first to comment!</p>
+  }
+
+  @for (comment of comments; track comment.id) {
+    <div class="comment">
+      <span class="avatar__circle">{{ comment.author.name.charAt(0) }}</span>
+      <div class="comment__bubble">
+        <strong>{{ comment.author.name }}</strong>
+        <p>{{ comment.text }}</p>
+        <small>{{ comment.createdAt | date:'short' }}</small>
+      </div>
+    </div>
+  }
+
+  @if (authService.isAuthenticated()) {
+    <div class="comment-form">
+      <span class="avatar__circle">{{ (authService.user$ | async)?.name?.charAt(0) || 'U' }}</span>
+      <div class="comment-input-wrapper">
+        <textarea
+          rows="2"
+          placeholder="Write a comment..."
+          [(ngModel)]="newComment"
+          [disabled]="submitting"
+        ></textarea>
+        <button
+          class="btn btn--primary"
+          (click)="addComment()"
+          [disabled]="!newComment.trim() || submitting"
+        >
+          @if (submitting) {
+            Posting...
+          } @else {
+            Post
+          }
+        </button>
+      </div>
+    </div>
+  } @else {
+    <p><a routerLink="/login">Log in</a> to leave a comment.</p>
+  }
+</div>

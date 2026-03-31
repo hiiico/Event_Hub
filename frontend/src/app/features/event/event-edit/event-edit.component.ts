@@ -1,6 +1,6 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import { EventService } from '../../../core/services/event/event.service';
 import { EventFormComponent } from '../../../shared/components/event-form/event-form.component';
 import { Event } from '../../../shared/interfaces/event';
@@ -8,20 +8,20 @@ import { Event } from '../../../shared/interfaces/event';
 @Component({
   selector: 'app-event-edit',
   standalone: true,
-  imports: [CommonModule, EventFormComponent],
+  imports: [CommonModule, EventFormComponent, RouterLink],
   templateUrl: './event-edit.component.html',
-  styleUrls: ['./event-edit.component.css']
+  styleUrls: ['./event-edit.component.css'],
 })
 export class EventEditComponent implements OnInit {
-  event: Event = {
+  event = {
     id: '',
     title: '',
     description: '',
     dateTime: '',
     location: '',
     category: '',
-    attendeeCount: 0,
-    organiser: { id: '', name: '', email: '' }
+    latitude: null as number | null,
+    longitude: null as number | null
   };
   loading = true;
   saving = false;
@@ -34,9 +34,9 @@ export class EventEditComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
-    console.log('EditComponent: id from route =', id);
+    console.log('Edit component: id from route =', id);
     if (id) {
       this.loadEvent(id);
     } else {
@@ -47,17 +47,25 @@ export class EventEditComponent implements OnInit {
   }
 
   loadEvent(id: string) {
-    console.log('Loading event with id:', id);
     this.eventService.getEventById(id).subscribe({
-      next: (event) => {
-        console.log('Event received:', event);
-        this.event = event;
+      next: (eventData) => {
+        console.log('Event loaded:', eventData);
+        // Map the data to our event object
+        this.event = {
+          id: eventData.id,
+          title: eventData.title,
+          description: eventData.description,
+          dateTime: eventData.dateTime,
+          location: eventData.location,
+          category: eventData.category,
+          latitude: eventData.latitude ?? null,
+          longitude: eventData.longitude ?? null
+        };
         this.loading = false;
-        // Force view update
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error loading event:', err);
+        console.error('Failed to load event', err);
         this.error = 'Failed to load event';
         this.loading = false;
         this.cdr.detectChanges();
@@ -72,7 +80,8 @@ export class EventEditComponent implements OnInit {
       next: () => {
         this.router.navigate(['/events', this.event.id]);
       },
-      error: () => {
+      error: (err) => {
+        console.error('Update failed', err);
         this.error = 'Failed to update event';
         this.saving = false;
         this.cdr.detectChanges();

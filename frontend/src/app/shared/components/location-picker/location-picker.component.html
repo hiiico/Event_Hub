@@ -1,0 +1,39 @@
+<div class="location-picker">
+  <div class="input-group">
+    <label>Location</label>
+    <input
+      type="text"
+      [(ngModel)]="address"
+      (ngModelChange)="onAddressChange()"
+      placeholder="Enter address or city name"
+    />
+  </div>
+
+  <button
+    type="button"
+    class="btn btn--outline"
+    (click)="useCurrentLocation()"
+    [disabled]="loading"
+  >
+    <i class="fas fa-location-dot"></i>
+    @if (loading) {
+      Getting location...
+    } @else {
+      Use my current location
+    }
+  </button>
+
+  @if (geocoding) {
+    <div class="info">Searching for address...</div>
+  }
+
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
+
+  @if (latitude && longitude && !loading) {
+    <div class="location-coords">
+      <small>📍 Coordinates: {{ latitude.toFixed(4) }}, {{ longitude.toFixed(4) }}</small>
+    </div>
+  }
+</div>

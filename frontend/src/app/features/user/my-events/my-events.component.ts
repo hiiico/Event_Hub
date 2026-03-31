@@ -67,6 +67,7 @@ export class MyEventsComponent implements OnInit {
   }
 
   editEvent(event: Event) {
+    console.log('Edit button clicked for event:', event.id);
     this.router.navigate(['/events/edit', event.id]);
   }
 
@@ -80,9 +81,17 @@ export class MyEventsComponent implements OnInit {
   }
 
   cancelRsvp(id: string) {
+    console.log('Canceling RSVP for event:', id);
     this.eventService.rsvpEvent(id).subscribe({
-      next: () => this.loadAttendingEvents(),
-      error: (err) => console.error('Cancel RSVP failed', err)
+      next: () => {
+        console.log('RSVP cancelled successfully');
+        this.loadAttendingEvents(); // Refresh the list
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Failed to cancel RSVP:', err);
+        alert('Failed to cancel RSVP. Please try again.');
+      }
     });
   }
 }

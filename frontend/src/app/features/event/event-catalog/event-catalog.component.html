@@ -1,37 +1,64 @@
-<!-- Hero section -->
 <section class="hero">
   <div class="hero__content">
     <h1>Discover local events,<br>gather with friends.</h1>
     <p>Find concerts, workshops, meetups – or create your own.</p>
-    <div class="search-bar">
-      <i class="fas fa-search"></i>
-      <input
-        type="text"
-        placeholder="Search by city or category..."
-        [ngModel]="searchTerm"
-        (ngModelChange)="onSearch($event)"
-      />
-      <button><i class="fas fa-arrow-right"></i></button>
-    </div>
+    <app-event-search (filtersChanged)="onFiltersChanged($event)"></app-event-search>
   </div>
   <div class="hero__graphic">
     <i class="fas fa-calendar-alt"></i>
   </div>
-</section>
-
-<!-- Upcoming events (horizontal) -->
-<section>
-  <h2><i class="fas fa-clock" style="color: var(--accent);"></i> Upcoming near you</h2>
-  <div class="upcoming-scroll" style="display: flex; gap: 1.5rem; overflow-x: auto; padding-bottom: 1rem;">
-    @for (event of upcomingEvents; track event.id) {
-      <app-event-card [event]="event" style="min-width: 260px; flex-shrink: 0;"></app-event-card>
-    } @empty {
-      <p>No upcoming events found.</p>
+  <div class="location-buttons">
+    @if (!locationEnabled && !locationLoading && !locationError) {
+      <button class="btn btn--outline" (click)="loadNearbyEvents()">
+        <i class="fas fa-location-dot"></i> Enable location
+      </button>
+    }
+    @if (locationEnabled && !locationLoading) {
+      <button class="btn btn--outline" (click)="disableLocationFilter()">
+        <i class="fas fa-times"></i> Disable location
+      </button>
     }
   </div>
 </section>
 
-<!-- All events catalog -->
+<!-- Near you section (only when location is enabled) -->
+@if (locationEnabled && !locationLoading) {
+  <section>
+    <div class="section-header">
+      <h2><i class="fas fa-location-dot" style="color: var(--accent);"></i> Near you</h2>
+    </div>
+    @if (locationError) {
+      <div class="error-message">{{ locationError }}</div>
+    }
+    @if (nearbyEvents.length === 0) {
+      <p>No nearby events within 50km.</p>
+    } @else {
+      <div class="horizontal-scroll">
+        @for (event of nearbyEvents; track event.id) {
+          <app-event-card [event]="event" class="scroll-card"></app-event-card>
+        }
+      </div>
+    }
+  </section>
+}
+
+<!-- Upcoming events section -->
+<section>
+  <h2><i class="fas fa-clock" style="color: var(--accent);"></i>
+    @if (locationEnabled) { Upcoming near you } @else { Upcoming events }
+  </h2>
+  @if (upcomingEvents.length === 0 && !loading) {
+    <p>No upcoming events found.</p>
+  } @else {
+    <div class="horizontal-scroll">
+      @for (event of upcomingEvents; track event.id) {
+        <app-event-card [event]="event" class="scroll-card"></app-event-card>
+      }
+    </div>
+  }
+</section>
+
+<!-- All events section -->
 <section>
   <h2><i class="fas fa-list" style="color: var(--primary);"></i> All events</h2>
   <div class="filter-bar">
@@ -42,11 +69,10 @@
       <i class="fas fa-tag"></i> Category: {{ categoryFilter || 'all' }}
     </div>
   </div>
-
   @if (loading) {
     <div class="loading-spinner">Loading events...</div>
   } @else if (error) {
-    <div class="error-message">Failed to load events. Please try again later.</div>
+    <div class="error-message">Failed to load events.</div>
   } @else {
     <div class="card-grid">
       @for (event of paginatedEvents; track event.id) {
@@ -56,7 +82,6 @@
       }
     </div>
   }
-
   @if (totalPages > 1 && !loading && !error) {
     <div class="pagination">
       <button class="btn btn--outline" (click)="previousPage()" [disabled]="currentPage === 0">Previous</button>

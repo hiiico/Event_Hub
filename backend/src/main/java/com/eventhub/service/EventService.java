@@ -43,6 +43,10 @@ public class EventService {
     }
 
     public EventResponse createEvent(EventRequest request, String organiserId) {
+        if (request.getDateTime().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Event date cannot be in the past");
+        }
+
         User organiser = userRepository.findById(organiserId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Event event = new Event();
@@ -59,6 +63,10 @@ public class EventService {
     }
 
     public EventResponse updateEvent(String id, EventRequest request, String userId) {
+        if (request.getDateTime().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Event date cannot be in the past");
+        }
+
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
         if (!event.getOrganiser().getId().equals(userId)) {

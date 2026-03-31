@@ -10,12 +10,23 @@
     </div>
     <div class="input-group">
       <label>Date & Time</label>
-      <input type="datetime-local" [(ngModel)]="event.dateTime" name="dateTime" required>
+      <input type="datetime-local" [(ngModel)]="event.dateTime" name="dateTime" required [min]="minDateTime">
     </div>
-    <div class="input-group">
-      <label>Location</label>
-      <input type="text" [(ngModel)]="event.location" name="location" required>
-    </div>
+
+    @if (isPastDate()) {
+      <div class="error">Event date cannot be in the past.</div>
+    }
+
+    @if (error) {
+      <div class="error">{{ error }}</div>
+    }
+
+    <!-- Location picker with two-way binding and change event -->
+    <app-location-picker
+      [(ngModel)]="locationData"
+      (ngModelChange)="onLocationChange($event)"
+      name="location"/>
+
     <div class="input-group">
       <label>Category</label>
       <select [(ngModel)]="event.category" name="category">
@@ -32,13 +43,8 @@
     @if (error) {
       <div class="error">{{ error }}</div>
     }
-
-    <button type="submit" class="btn btn--accent" [disabled]="loading" style="width:100%; justify-content:center;">
-      @if (loading) {
-        Saving...
-      } @else {
-        {{ buttonLabel }}
-      }
+    <button type="submit" class="btn btn--accent" [disabled]="loading || isPastDate()" style="width:100%; justify-content:center;">
+      @if (loading) { Saving... } @else { {{ buttonLabel }} }
     </button>
   </form>
 </div>

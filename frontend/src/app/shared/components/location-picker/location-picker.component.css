@@ -1,0 +1,26 @@
+.location-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+.input-group {
+  margin-bottom: 0;
+}
+.btn--outline {
+  align-self: flex-start;
+}
+.location-coords {
+  background: var(--bg-light);
+  padding: 0.4rem 0.8rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+}
+.info {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.error {
+  color: #c0392b;
+  font-size: 0.8rem;
+}

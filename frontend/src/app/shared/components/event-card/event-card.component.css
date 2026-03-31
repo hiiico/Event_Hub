@@ -1,5 +1,68 @@
-/* Any event-card specific adjustments */
+.event-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: var(--transition);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+}
+
+.event-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+}
+
 .event-card__image {
+  height: 150px;
   background-size: cover;
   background-position: center;
+}
+
+.event-card__content {
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.event-card__title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.event-card__detail {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+}
+
+.event-card__detail i {
+  width: 1.2rem;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.event-card__footer {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.learn-more {
+  text-decoration: none;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.learn-more:hover {
+  text-decoration: underline;
 }

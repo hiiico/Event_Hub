@@ -1,0 +1,23 @@
+<div class="event-search">
+
+  <div class="search-bar">
+    <i class="fas fa-search"></i>
+    <input
+      type="text"
+      placeholder="Search by title, location..."
+      [(ngModel)]="searchTerm"
+      (input)="onSearchInput()"
+    />
+<!--  </div>-->
+
+  <div class="category-filter">
+    <select [(ngModel)]="selectedCategory" (change)="onCategoryChange()">
+      <option value="">All categories</option>
+      @for (cat of categories; track cat) {
+        <option [value]="cat">{{ cat }}</option>
+      }
+    </select>
+  </div>
+  </div>
+
+</div>

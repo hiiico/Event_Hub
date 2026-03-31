@@ -1,0 +1,85 @@
+.comment-section {
+  margin-top: 2rem;
+  background: var(--bg-light);
+  padding: 1.8rem;
+  border-radius: 1.5rem;
+}
+
+.comment {
+  display: flex;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  flex-wrap: wrap;
+}
+
+.comment__bubble {
+  background: white;
+  padding: 1rem 1.4rem;
+  border-radius: 1.5rem 1.5rem 1.5rem 0.2rem;
+  flex: 1 1 200px;
+  box-shadow: var(--shadow-sm);
+}
+
+.comment__bubble strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-dark);
+}
+
+.comment__bubble p {
+  margin: 0.5rem 0;
+  color: var(--text-muted);
+}
+
+.comment__bubble small {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.comment-form {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.comment-input-wrapper {
+  flex: 1;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.comment-input-wrapper textarea {
+  flex: 1;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 60px;
+}
+
+.comment-input-wrapper textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.comment-input-wrapper button {
+  align-self: flex-end;
+  margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .comment-form {
+    flex-direction: column;
+  }
+
+  .comment-input-wrapper {
+    flex-direction: column;
+  }
+
+  .comment-input-wrapper button {
+    width: 100%;
+  }
+}
