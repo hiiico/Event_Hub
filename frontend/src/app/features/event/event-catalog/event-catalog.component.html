@@ -7,17 +7,21 @@
   <div class="hero__graphic">
     <i class="fas fa-calendar-alt"></i>
   </div>
-  <div class="location-buttons">
-    @if (!locationEnabled && !locationLoading && !locationError) {
-      <button class="btn btn--outline" (click)="loadNearbyEvents()">
-        <i class="fas fa-location-dot"></i> Enable location
-      </button>
-    }
-    @if (locationEnabled && !locationLoading) {
-      <button class="btn btn--outline" (click)="disableLocationFilter()">
-        <i class="fas fa-times"></i> Disable location
-      </button>
-    }
+  <div class="hero__buttons">
+    <!-- Both buttons always present, one hidden visually but retains space -->
+    <button class="btn btn--outline"
+            [class.hide]="locationEnabled || locationLoading || locationError"
+            [class.show]="!locationEnabled && !locationLoading && !locationError"
+            (click)="loadNearbyEvents()">
+      <i class="fas fa-location-dot"></i> Enable location
+    </button>
+    <button class="btn btn--active"
+            [class.hide]="!locationEnabled || locationLoading"
+            [class.show]="locationEnabled && !locationLoading"
+            (click)="disableLocationFilter()">
+      <i class="fas fa-location-dot"></i> Location active
+      <i class="fas fa-times"></i>
+    </button>
   </div>
 </section>
 

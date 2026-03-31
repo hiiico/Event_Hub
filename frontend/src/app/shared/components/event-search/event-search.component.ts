@@ -23,7 +23,7 @@ export class EventSearchComponent implements OnInit {
     this.searchSubject.pipe(
       debounceTime(300),
       distinctUntilChanged()
-    ).subscribe(term => {
+    ).subscribe(() => {
       this.emitFilters();
     });
   }

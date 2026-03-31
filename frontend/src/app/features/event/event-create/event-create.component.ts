@@ -10,7 +10,7 @@ import { EventFormComponent } from '../../../shared/components/event-form/event-
   templateUrl: './event-create.component.html',
   styleUrls: ['./event-create.component.css'],
 })
-class EventCreateComponent {
+export class EventCreateComponent {
   event = {
     title: '',
     description: '',
@@ -48,5 +48,3 @@ class EventCreateComponent {
     });
   }
 }
-
-export default EventCreateComponent

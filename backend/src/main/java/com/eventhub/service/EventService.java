@@ -10,12 +10,14 @@ import com.eventhub.model.User;
 import com.eventhub.repository.CommentRepository;
 import com.eventhub.repository.EventRepository;
 import com.eventhub.repository.UserRepository;
+import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -109,8 +111,21 @@ public class EventService {
         return eventRepository.findByOrganiserId(userId, pageable).map(this::toResponse);
     }
 
+//    public Page<EventResponse> getEventsAttending(String userId, Pageable pageable) {
+//        System.out.println("Querying attending events for user ID: " + userId);
+//        Page<Event> events = eventRepository.findByAttendeeId(userId, pageable);
+//        System.out.println("Found: " + events.getTotalElements());
+//        return events.map(this::toResponse);
+//    }
+
     public Page<EventResponse> getEventsAttending(String userId, Pageable pageable) {
-        return eventRepository.findByAttendeeId(userId, pageable).map(this::toResponse);
+        System.out.println("Querying attending events for user ID: " + userId);
+
+        ObjectId objectId = new ObjectId(userId); // convert here
+
+        Page<Event> events = eventRepository.findByAttendeeId(objectId, pageable);
+        System.out.println("Found: " + events.getTotalElements());
+        return events.map(this::toResponse);
     }
 
     private EventResponse toResponse(Event event) {
@@ -121,11 +136,11 @@ public class EventService {
         response.setDateTime(event.getDateTime());
         response.setLocation(event.getLocation());
         response.setCategory(event.getCategory());
-        response.setAttendeeCount(event.getAttendees() != null ? event.getAttendees().size() : 0);
+//        response.setAttendeeCount(event.getAttendees() != null ? event.getAttendees().size() : 0);
         response.setLatitude(event.getLatitude());
         response.setLongitude(event.getLongitude());
 
-        // Handle null organiser
+        // Handle organiser
         if (event.getOrganiser() != null) {
             UserDto organiserDto = new UserDto();
             organiserDto.setId(event.getOrganiser().getId());
@@ -136,6 +151,14 @@ public class EventService {
             response.setOrganiser(null);
         }
 
+        // Handle attendees list
+        if (event.getAttendees() != null) {
+            List<UserDto> attendeeDtos = event.getAttendees().stream()
+                    .map(this::toUserDto)
+                    .collect(Collectors.toList());
+            response.setAttendees(attendeeDtos);
+        }
+
         // Handle comments safely
         if (event.getComments() != null) {
             response.setComments(event.getComments().stream()
@@ -144,6 +167,16 @@ public class EventService {
                     .collect(Collectors.toSet()));
         }
         return response;
+    }
+
+    // Add helper method to convert User to UserDto
+    private UserDto toUserDto(User user) {
+        if (user == null) return null;
+        UserDto dto = new UserDto();
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        return dto;
     }
 
     private CommentDto toCommentDto(Comment comment) {

@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import { EventService } from '../../../core/services/event/event.service';
 import { EventFormComponent } from '../../../shared/components/event-form/event-form.component';
-import { Event } from '../../../shared/interfaces/event';
 
 @Component({
   selector: 'app-event-edit',

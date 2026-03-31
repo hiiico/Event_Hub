@@ -9,7 +9,8 @@ export interface Event {
   location: string;
   category: string;
   organiser: User;
-  attendeeCount: number;
+  // attendeeCount: number;
+  attendees?: User[]
   comments?: Comment[];
   latitude?: number | null;  // Add optional coordinates
   longitude?: number | null;

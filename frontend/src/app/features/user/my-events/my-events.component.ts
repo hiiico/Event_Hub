@@ -1,9 +1,10 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
+import {RouterLink, Router, NavigationEnd} from '@angular/router';
 import { EventService } from '../../../core/services/event/event.service';
 import { EventCardComponent } from '../../../shared/components/event-card/event-card.component';
 import { Event } from '../../../shared/interfaces/event';
+import {filter} from 'rxjs';
 
 @Component({
   selector: 'app-my-events',
@@ -25,7 +26,11 @@ export class MyEventsComponent implements OnInit {
     private eventService: EventService,
     private router: Router,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) {  this.router.events.pipe(
+    filter(event => event instanceof NavigationEnd && event.url === '/my-events')
+  ).subscribe(() => {
+    this.loadAttendingEvents();
+  });}
 
   ngOnInit(): void {
     this.loadCreatedEvents();

@@ -39,8 +39,12 @@ export class EventDetailsComponent implements OnInit {
     this.eventService.getEventById(id).subscribe({
       next: (event) => {
         this.event = event;
-        // TODO: check if current user is attending (needs user id from token)
-        this.isAttending = false;
+        const currentUser = this.authService.getCurrentUser();
+        if (currentUser && this.event.attendees) {
+          this.isAttending = this.event.attendees.some(attendee => attendee.id === currentUser.id);
+        } else {
+          this.isAttending = false;
+        }
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -54,7 +58,17 @@ export class EventDetailsComponent implements OnInit {
     this.eventService.rsvpEvent(this.event.id).subscribe({
       next: () => {
         this.isAttending = !this.isAttending;
-        if (this.event) this.event.attendeeCount += this.isAttending ? 1 : -1;
+        if (this.event) {
+          if (this.isAttending) {
+            const currentUser = this.authService.getCurrentUser();
+            if (currentUser) this.event.attendees = [...(this.event.attendees || []), currentUser];
+          } else {
+            const currentUser = this.authService.getCurrentUser();
+            if (currentUser) {
+              this.event.attendees = this.event.attendees?.filter(a => a.id !== currentUser.id) || [];
+            }
+          }
+        }
         this.rsvpLoading = false;
         this.cdr.detectChanges();
       },

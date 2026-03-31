@@ -10,7 +10,7 @@
     </div>
     <p>{{ event!.description }}</p>
     <div class="rsvp-area">
-      <span><i class="fas fa-user-check"></i> <strong>{{ event!.attendeeCount }} going</strong></span>
+      <span><i class="fas fa-user-check"></i> <strong>{{ event!.attendees?.length || 0}} going</strong></span>
       <button class="btn btn--rsvp" (click)="toggleRsvp()" [disabled]="rsvpLoading">
         @if (isAttending) { Cancel RSVP } @else { RSVP }
       </button>
