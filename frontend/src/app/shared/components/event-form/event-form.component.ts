@@ -43,7 +43,6 @@ export class EventFormComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['event'] && this.event) {
-      console.log('🔄 EventFormComponent – event input changed:', this.event);
       this.locationData = {
         address: this.event.location || '',
         latitude: this.event.latitude ?? null,
@@ -53,19 +52,33 @@ export class EventFormComponent implements OnChanges {
   }
 
   onLocationChange(data: LocationData) {
-    console.log('📍 Location picker emitted:', data);
     // Update the event object directly
     this.event.location = data.address;
     this.event.latitude = data.latitude;
     this.event.longitude = data.longitude;
     this.eventChange.emit(this.event);
-    console.log('✅ Event after update:', this.event);
   }
 
   onSubmit() {
-    console.log('🚀 Submitting event:', this.event);
     if (this.loading) return;
     if (this.isPastDate()) return;
     this.submit.emit();
+  }
+
+  resetForm() {
+    this.event = {
+      title: '',
+      description: '',
+      dateTime: '',
+      location: '',
+      category: '',
+      latitude: null,
+      longitude: null
+    };
+    this.locationData = {
+      address: '',
+      latitude: null,
+      longitude: null
+    };
   }
 }

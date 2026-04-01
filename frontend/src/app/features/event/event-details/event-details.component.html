@@ -11,9 +11,11 @@
     <p>{{ event!.description }}</p>
     <div class="rsvp-area">
       <span><i class="fas fa-user-check"></i> <strong>{{ event!.attendees?.length || 0}} going</strong></span>
-      <button class="btn btn--rsvp" (click)="toggleRsvp()" [disabled]="rsvpLoading">
-        @if (isAttending) { Cancel RSVP } @else { RSVP }
-      </button>
+      @if (authService.isAuthenticated()) {
+        <button class="btn btn--rsvp" (click)="toggleRsvp()" [disabled]="rsvpLoading">
+          @if (isAttending) { Cancel RSVP } @else { RSVP }
+        </button>
+      }
     </div>
     <app-comment-section [comments]="event!.comments || []" [eventId]="event!.id" (commentAdded)="onCommentAdded($event)"></app-comment-section>
   </section>

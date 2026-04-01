@@ -53,7 +53,6 @@ export class LocationPickerComponent implements ControlValueAccessor {
       });
       this.latitude = position.coords.latitude;
       this.longitude = position.coords.longitude;
-      console.log('📍 Got current location:', this.latitude, this.longitude);
       const address = await this.reverseGeocode(this.latitude, this.longitude);
       this.address = address || `${this.latitude.toFixed(4)}, ${this.longitude.toFixed(4)}`;
       this.emitValue();
@@ -79,7 +78,6 @@ export class LocationPickerComponent implements ControlValueAccessor {
       if (coords) {
         this.latitude = coords.lat;
         this.longitude = coords.lon;
-        console.log('🗺️ Geocoded address:', this.address, '→', this.latitude, this.longitude);
       } else {
         this.latitude = null;
         this.longitude = null;
@@ -136,7 +134,6 @@ export class LocationPickerComponent implements ControlValueAccessor {
       this.address = value.address || '';
       this.latitude = value.latitude ?? null;
       this.longitude = value.longitude ?? null;
-      console.log('✍️ writeValue received:', value);
     } else {
       this.address = '';
       this.latitude = null;

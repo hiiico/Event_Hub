@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import {Component, inject} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../../core/services/auth/auth.service';
+import {ApiService} from '../../../core/services/api/api-service';
 
 @Component({
   selector: 'app-register',
@@ -11,17 +11,30 @@ import { AuthService } from '../../../core/services/auth/auth.service';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent {
+  private apiService = inject(ApiService);
+  private router = inject(Router);
+
   name = '';
   email = '';
   password = '';
+  rePassword = '';
+  loading = false;
   error = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  get passwordMismatch(): boolean {
+    return this.password !== this.rePassword;
+  }
 
   onSubmit() {
-    this.authService.register(this.name, this.email, this.password).subscribe({
+    if (this.passwordMismatch) return;
+    this.loading = true;
+    this.error = '';
+    this.apiService.register(this.name, this.email, this.password).subscribe({
       next: () => this.router.navigate(['/events']),
-      error: (err) => this.error = err.error?.message || 'Registration failed'
+      error: (err) => {
+        this.error = err.error?.message || 'Registration failed';
+        this.loading = false;
+      }
     });
   }
 }

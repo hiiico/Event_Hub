@@ -1,0 +1,40 @@
+.about-page {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 2rem;
+  box-shadow: var(--shadow-sm);
+}
+.about-page h1 {
+  margin-bottom: 1rem;
+}
+.about-page h2 {
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+}
+.about-page p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.about-page a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.about-page a:hover {
+  text-decoration: underline;
+}
+.btn--accent {
+  background-color: var(--accent);
+  color: white;
+  padding: 0.6rem 1.4rem;
+  border-radius: var(--radius-btn);
+  font-weight: 600;
+  display: inline-block;
+  transition: var(--transition);
+}
+.btn--accent:hover {
+  background-color: var(--accent-light);
+  transform: scale(1.02);
+  text-decoration: none;
+}
