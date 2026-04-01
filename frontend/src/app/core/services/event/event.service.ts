@@ -1,60 +1,46 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { ApiService } from '../api/api-service';
 import { Event } from '../../../shared/interfaces/event';
 import { Comment } from '../../../shared/interfaces/comment';
 
 @Injectable({ providedIn: 'root' })
 export class EventService {
-  private apiUrl = 'http://localhost:3000/api/events';
-
-  constructor(private http: HttpClient) {}
+  private apiService = inject(ApiService);
 
   getAllEvents(page: number = 0, size: number = 10): Observable<any> {
-    const params = new HttpParams().set('page', page).set('size', size);
-    return this.http.get<any>(this.apiUrl, { params });
+    return this.apiService.getAllEvents(page, size);
   }
 
   getEventById(id: string): Observable<Event> {
-    return this.http.get<Event>(`${this.apiUrl}/${id}`);
+    return this.apiService.getEventById(id);
   }
 
-    createEvent(event: {
-        title: string;
-        description: string;
-        dateTime: string;
-        location: string;
-        category: string;
-        latitude: number | null;
-        longitude: number | null
-    }): Observable<Event> {
-    return this.http.post<Event>(this.apiUrl, event);
+  createEvent(event: Partial<Event>): Observable<Event> {
+    return this.apiService.createEvent(event);
   }
 
   updateEvent(id: string, event: Partial<Event>): Observable<Event> {
-    return this.http.put<Event>(`${this.apiUrl}/${id}`, event);
+    return this.apiService.updateEvent(id, event);
   }
 
   deleteEvent(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.apiService.deleteEvent(id);
   }
 
   rsvpEvent(id: string): Observable<void> {
-    console.log('RSVP API call for event:', id);
-    return this.http.post<void>(`${this.apiUrl}/${id}/rsvp`, {});
-  }
-
-  getMyCreatedEvents(page: number = 0, size: number = 10): Observable<any> {
-    const params = new HttpParams().set('page', page).set('size', size);
-    return this.http.get<any>(`${this.apiUrl}/user/created`, { params });
-  }
-
-  getMyAttendingEvents(page: number = 0, size: number = 10): Observable<any> {
-    const params = new HttpParams().set('page', page).set('size', size);
-    return this.http.get<any>(`${this.apiUrl}/user/attending`, { params });
+    return this.apiService.rsvpEvent(id);
   }
 
   addComment(eventId: string, text: string): Observable<Comment> {
-    return this.http.post<Comment>(`${this.apiUrl}/${eventId}/comments`, { text });
+    return this.apiService.addComment(eventId, text);
+  }
+
+  getMyCreatedEvents(page: number = 0, size: number = 10): Observable<any> {
+    return this.apiService.getMyCreatedEvents(page, size);
+  }
+
+  getMyAttendingEvents(page: number = 0, size: number = 10): Observable<any> {
+    return this.apiService.getMyAttendingEvents(page, size);
   }
 }

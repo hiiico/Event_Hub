@@ -1,87 +1,78 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { Injectable, inject, signal, computed, effect, WritableSignal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { ApiService } from '../api/api-service';
 import { User } from '../../../shared/interfaces/user';
+import { tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/api/auth';
-  private usersUrl = 'http://localhost:3000/api/users';
+  private apiService = inject(ApiService);
   private tokenKey = 'eventhub_token';
   private userKey = 'eventhub_user';
-  private userSubject = new BehaviorSubject<User | null>(null);
-  public user$ = this.userSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  private user: WritableSignal<User | null> = signal<User | null>(null);
+  user$ = toObservable(this.user); // ✅ convert signal to observable
+
+  isAuthenticated = computed(() => !!this.user());
+  userName = computed(() => this.user()?.name || '');
+
+  constructor() {
     this.loadUserFromStorage();
+    // persist user to localStorage when it changes
+    effect(() => {
+      const current = this.user();
+      if (current) localStorage.setItem(this.userKey, JSON.stringify(current));
+      else localStorage.removeItem(this.userKey);
+    });
   }
 
   private loadUserFromStorage(): void {
     const token = localStorage.getItem(this.tokenKey);
     if (token) {
-      // Fetch the current user using the token
-      this.fetchCurrentUser().subscribe({
-        next: (user) => this.setUser(user),
+      this.apiService.getCurrentUser().subscribe({
+        next: user => this.user.set(user),
         error: () => this.logout()
       });
     } else {
-      this.userSubject.next(null);
+      this.user.set(null);
     }
   }
 
-  private fetchCurrentUser(): Observable<User> {
-    return this.http.get<User>(`${this.usersUrl}/me`).pipe(
-      catchError(err => throwError(() => err))
+  register(name: string, email: string, password: string) {
+    return this.apiService.register(name, email, password).pipe(
+      tap(token => {
+        localStorage.setItem(this.tokenKey, token);
+        this.apiService.getCurrentUser().subscribe(user => this.user.set(user));
+      })
     );
   }
 
-  private setUser(user: User): void {
-    localStorage.setItem(this.userKey, JSON.stringify(user));
-    this.userSubject.next(user);
-  }
-
-  register(name: string, email: string, password: string): Observable<string> {
-    return this.http.post(`${this.apiUrl}/register`, { name, email, password }, { responseType: 'text' })
-      .pipe(
-        tap(token => localStorage.setItem(this.tokenKey, token)),
-        switchMap(() => this.fetchCurrentUser()),
-        tap(user => this.setUser(user)),
-        map(() => localStorage.getItem(this.tokenKey) as string)
-      );
-  }
-
-  login(email: string, password: string): Observable<string> {
-    return this.http.post(`${this.apiUrl}/login`, { email, password }, { responseType: 'text' })
-      .pipe(
-        tap(token => localStorage.setItem(this.tokenKey, token)),
-        switchMap(() => this.fetchCurrentUser()),
-        tap(user => this.setUser(user)),
-        map(() => localStorage.getItem(this.tokenKey) as string)
-      );
+  login(email: string, password: string) {
+    return this.apiService.login(email, password).pipe(
+      tap(token => {
+        localStorage.setItem(this.tokenKey, token);
+        this.apiService.getCurrentUser().subscribe(user => this.user.set(user));
+      })
+    );
   }
 
   logout(): void {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
-    this.userSubject.next(null);
+    this.user.set(null);
   }
 
   getToken(): string | null {
     return localStorage.getItem(this.tokenKey);
   }
 
-  isAuthenticated(): boolean {
-    return !!this.getToken();
-  }
-
   getCurrentUser(): User | null {
-    return this.userSubject.getValue();
+    return this.user();
   }
 
-  updateUser(user: { name: string; email: string }): Observable<User> {
-    return this.http.put<User>(`${this.usersUrl}/me`, user).pipe(
-      tap(updatedUser => this.setUser(updatedUser))
+  updateUser(user: { name: string; email: string }) {
+    return this.apiService.updateUser(user).pipe(
+      tap(updated => this.user.set(updated))
     );
   }
 }

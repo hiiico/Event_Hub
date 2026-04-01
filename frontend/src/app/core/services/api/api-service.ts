@@ -1,59 +1,55 @@
-// import {inject, Injectable} from '@angular/core';
-// import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-// import { Observable, throwError, of } from 'rxjs';
-// import { catchError } from 'rxjs/operators';
-// import { environment } from '../../../../environments/environment';
-// import { User, UserCredentials } from '../../../shared/interfaces/user';
-//
-// @Injectable({ providedIn: 'root' })
-// export class ApiService {
-//   private apiUrl = environment.apiUrl;
-//   private http = inject(HttpClient);
-//   // All authenticated requests must include credentials (cookies)
-//   private httpOptions = { withCredentials: true };
-//
-//   private handleError(error: HttpErrorResponse) {
-//     const message = error.error?.message || `Error ${error.status}: ${error.message}`;
-//     console.error('API error:', error);
-//     return throwError(() => new Error(message));
-//   }
-//
-//   // ========== Auth ==========
-//   register(user: UserCredentials): Observable<User> {
-//     const payload = {
-//       username: user.username,
-//       email: user.email,
-//       password: user.password,
-//       rePassword: user.password,
-//       tel: user.tel
-//     };
-//     return this.http.post<User>(`${this.apiUrl}/register`, payload, this.httpOptions).pipe(
-//       catchError(this.handleError)
-//     );
-//   }
-//
-//   login(email: string, password: string): Observable<User> {
-//     return this.http.post<User>(`${this.apiUrl}/login`, { email, password }, this.httpOptions).pipe(
-//       catchError(this.handleError)
-//     );
-//   }
-//
-//   logout(): Observable<any> {
-//     return this.http.post(`${this.apiUrl}/logout`, {}, this.httpOptions).pipe(
-//       catchError(this.handleError)
-//     );
-//   }
-//
-//   // ========== Profile ==========
-//   getProfile(): Observable<User> {
-//     return this.http.get<User>(`${this.apiUrl}/users/profile`, this.httpOptions).pipe(
-//       catchError(this.handleError)
-//     );
-//   }
-//
-//   updateProfile(profile: Partial<User>): Observable<User> {
-//     return this.http.put<User>(`${this.apiUrl}/users/profile`, profile, this.httpOptions).pipe(
-//       catchError(this.handleError)
-//     );
-//   }
-// }
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Event } from '../../../shared/interfaces/event';
+import { Comment } from '../../../shared/interfaces/comment';
+import { User } from '../../../shared/interfaces/user';
+
+@Injectable({ providedIn: 'root' })
+export class ApiService {
+  private http = inject(HttpClient);
+  private baseUrl = 'http://localhost:3000/api';
+
+  // Auth
+  register(name: string, email: string, password: string): Observable<string> {
+    return this.http.post(`${this.baseUrl}/auth/register`, { name, email, password }, { responseType: 'text' });
+  }
+  login(email: string, password: string): Observable<string> {
+    return this.http.post(`${this.baseUrl}/auth/login`, { email, password }, { responseType: 'text' });
+  }
+  getCurrentUser(): Observable<User> {
+    return this.http.get<User>(`${this.baseUrl}/users/me`);
+  }
+  updateUser(user: { name: string; email: string }): Observable<User> {
+    return this.http.put<User>(`${this.baseUrl}/users/me`, user);
+  }
+
+  // Events
+  getAllEvents(page: number = 0, size: number = 10): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/events`, { params: { page, size } });
+  }
+  getEventById(id: string): Observable<Event> {
+    return this.http.get<Event>(`${this.baseUrl}/events/${id}`);
+  }
+  createEvent(event: Partial<Event>): Observable<Event> {
+    return this.http.post<Event>(`${this.baseUrl}/events`, event);
+  }
+  updateEvent(id: string, event: Partial<Event>): Observable<Event> {
+    return this.http.put<Event>(`${this.baseUrl}/events/${id}`, event);
+  }
+  deleteEvent(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/events/${id}`);
+  }
+  rsvpEvent(id: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/events/${id}/rsvp`, {});
+  }
+  addComment(eventId: string, text: string): Observable<Comment> {
+    return this.http.post<Comment>(`${this.baseUrl}/events/${eventId}/comments`, { text });
+  }
+  getMyCreatedEvents(page: number = 0, size: number = 10): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/events/user/created`, { params: { page, size } });
+  }
+  getMyAttendingEvents(page: number = 0, size: number = 10): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/events/user/attending`, { params: { page, size } });
+  }
+}

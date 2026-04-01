@@ -68,4 +68,21 @@ export class EventFormComponent implements OnChanges {
     if (this.isPastDate()) return;
     this.submit.emit();
   }
+
+  resetForm() {
+    this.event = {
+      title: '',
+      description: '',
+      dateTime: '',
+      location: '',
+      category: '',
+      latitude: null,
+      longitude: null
+    };
+    this.locationData = {
+      address: '',
+      latitude: null,
+      longitude: null
+    };
+  }
 }
