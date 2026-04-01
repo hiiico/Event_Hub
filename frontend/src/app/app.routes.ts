@@ -6,14 +6,16 @@ import {MyEventsComponent} from './features/user/my-events/my-events.component';
 import {EventCreateComponent} from './features/event/event-create/event-create.component';
 import {EventEditComponent} from './features/event/event-edit/event-edit.component';
 import {ProfileComponent} from './features/user/profile/profile.component';
-import {Home} from './features/home/home';
+import {HomeComponent} from './features/home/home.component';
 import {loggedInGuard} from './core/guards/logged-in.guard';
 import {EventCatalogComponent} from './features/event/event-catalog/event-catalog.component';
 import { authGuard} from './core/guards/auth.guard';
+import {AboutComponent} from './features/about-component/about.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/events', pathMatch: 'full' },
-  { path: 'home', component: Home },
+  { path: '', component: HomeComponent, pathMatch: 'full' },
+  { path: 'about', component: AboutComponent },
+  { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent, canActivate: [loggedInGuard]},
   { path: 'register', component: RegisterComponent, canActivate: [loggedInGuard] },
   { path: 'events', component: EventCatalogComponent },
@@ -22,5 +24,5 @@ export const routes: Routes = [
   { path: 'events/:id', component: EventDetailsComponent},
   { path: 'my-events', component: MyEventsComponent, canActivate: [authGuard]},
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard]},
-  { path: '**', redirectTo: '/events' }
+  { path: '**', redirectTo: '' }
 ];

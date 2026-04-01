@@ -1,0 +1,54 @@
+<section class="home-hero">
+  <div class="home-hero__content">
+    <h1>Discover & Share Events<br>That Matter to You</h1>
+    <p>EventHub connects people through local events – from concerts to workshops. Create, share, and RSVP effortlessly.</p>
+    <div class="home-hero__buttons">
+      <button routerLink="/events" class="btn btn--accent">Explore Events</button>
+      @if (!authService.isAuthenticated()) {
+        <button routerLink="/register" class="btn btn--outline">Join Now</button>
+      }
+    </div>
+  </div>
+  <div class="home-hero__image">
+    <i class="fas fa-calendar-alt"></i>
+  </div>
+</section>
+
+<section class="home-features">
+  <h2>Why EventHub?</h2>
+  <div class="features-grid">
+    <div class="feature">
+      <i class="fas fa-magnifying-glass-chart"></i>
+      <h3>Discover</h3>
+      <p>Find events by location, category, or date. Use geolocation to see what's near you.</p>
+    </div>
+    <div class="feature">
+      <i class="fas fa-user-plus"></i>
+      <h3>Connect</h3>
+      <p>RSVP to events, meet people, and grow your network.</p>
+    </div>
+    <div class="feature">
+      <i class="fas fa-calendar-plus"></i>
+      <h3>Create</h3>
+      <p>Host your own events and manage them with ease.</p>
+    </div>
+  </div>
+</section>
+
+<section class="home-featured">
+  <h2>Featured Events</h2>
+  @if (loading()) {
+    <div class="loading-spinner">Loading featured events...</div>
+  } @else {
+    <div class="card-grid">
+      @for (event of featuredEvents(); track event.id) {
+        <app-event-card [event]="event"></app-event-card>
+      } @empty {
+        <p>No events yet. Be the first to create one!</p>
+      }
+    </div>
+  }
+  <div class="text-center">
+    <button routerLink="/events" class="btn btn--outline">View All Events</button>
+  </div>
+</section>

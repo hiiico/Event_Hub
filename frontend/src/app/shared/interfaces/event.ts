@@ -5,13 +5,12 @@ export interface Event {
   id: string;
   title: string;
   description: string;
-  dateTime: string; // ISO string
+  dateTime: string;
   location: string;
   category: string;
   organiser: User;
-  // attendeeCount: number;
   attendees?: User[]
   comments?: Comment[];
-  latitude?: number | null;  // Add optional coordinates
+  latitude?: number | null;
   longitude?: number | null;
 }

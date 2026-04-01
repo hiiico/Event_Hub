@@ -14,7 +14,6 @@ export class AuthService {
   user$ = toObservable(this.user); // ✅ convert signal to observable
 
   isAuthenticated = computed(() => !!this.user());
-  userName = computed(() => this.user()?.name || '');
 
   constructor() {
     this.loadUserFromStorage();
