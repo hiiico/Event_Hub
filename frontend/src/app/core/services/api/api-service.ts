@@ -4,11 +4,12 @@ import { Observable } from 'rxjs';
 import { Event } from '../../../shared/interfaces/event';
 import { Comment } from '../../../shared/interfaces/comment';
 import { User } from '../../../shared/interfaces/user';
+import { environment } from "../../../../environments/environment.prod";
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:3000/api';
+  private baseUrl = environment.apiUrl;
 
   // Auth
   register(name: string, email: string, password: string): Observable<string> {
