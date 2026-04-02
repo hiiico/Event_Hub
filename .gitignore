@@ -62,11 +62,8 @@ logs/
 # Environment files (root level)
 *.env
 
+# Terraform secrets
+terraform/terraform.tfvars
+
 # Backend local development properties (if hardcoded)
 backend/src/main/resources/application-dev.properties
-terraform/terraform.tfstate
-terraform/terraform.tfstate.backup
-terraform/.terraform/
-terraform/*.tfstate
-terraform/*.tfstate.backup
-terraform/terraform.tfvars
