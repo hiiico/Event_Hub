@@ -3,9 +3,9 @@ WORKDIR /app
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
 COPY frontend/ .
-RUN npm run build --prod
+RUN npm run build -- --configuration production
 
 FROM nginx:alpine
-COPY --from=builder /app/dist/eventhub-frontend /usr/share/nginx/html
+COPY --from=builder /app/dist/eventhub-frontend/browser /usr/share/nginx/html
 COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
