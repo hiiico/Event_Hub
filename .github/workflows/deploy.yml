@@ -50,15 +50,22 @@ jobs:
           cd frontend
           npm ci
           npm run build --prod
+          ls -la dist/   # list output to see the actual folder name
 
       - name: Upload to Azure Storage static website
         uses: azure/CLI@v2
         with:
           azcliversion: latest
           inlineScript: |
+            # Use the actual output path (adjust if different)
+            BUILD_PATH="./frontend/dist/eventhub-frontend"
+            if [ ! -d "$BUILD_PATH" ]; then
+              echo "ERROR: Build directory $BUILD_PATH not found!"
+              exit 1
+            fi
             az storage blob upload-batch \
               --account-name ${{ env.AZURE_STORAGE_ACCOUNT }} \
               --account-key "${{ secrets.AZURE_STORAGE_KEY }}" \
-              --source "./frontend/dist/eventhub-frontend" \
+              --source "$BUILD_PATH" \
               --destination '$web' \
               --overwrite
