@@ -1,0 +1,79 @@
+{
+  "version": 4,
+  "terraform_version": "1.14.8",
+  "serial": 71,
+  "lineage": "d8c01426-da96-db5e-bcf3-718a1ab85a53",
+  "outputs": {
+    "backend_url": {
+      "value": "https://eventhub-backend.azurewebsites.net",
+      "type": "string"
+    },
+    "frontend_url": {
+      "value": null,
+      "type": "string"
+    },
+    "resource_group_name": {
+      "value": "eventhub-rg",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "managed",
+      "type": "azurerm_resource_group",
+      "name": "rg",
+      "provider": "provider[\"registry.terraform.io/hashicorp/azurerm\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "/subscriptions/06705eae-76c6-489f-b1f3-64e70ff380a1/resourceGroups/eventhub-rg",
+            "location": "francecentral",
+            "managed_by": "",
+            "name": "eventhub-rg",
+            "tags": {},
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo1NDAwMDAwMDAwMDAwLCJkZWxldGUiOjU0MDAwMDAwMDAwMDAsInJlYWQiOjMwMDAwMDAwMDAwMCwidXBkYXRlIjo1NDAwMDAwMDAwMDAwfX0="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "azurerm_service_plan",
+      "name": "app_plan",
+      "provider": "provider[\"registry.terraform.io/hashicorp/azurerm\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "app_service_environment_id": "",
+            "id": "/subscriptions/06705eae-76c6-489f-b1f3-64e70ff380a1/resourceGroups/eventhub-rg/providers/Microsoft.Web/serverFarms/eventhub-plan",
+            "kind": "linux",
+            "location": "francecentral",
+            "maximum_elastic_worker_count": 1,
+            "name": "eventhub-plan",
+            "os_type": "Linux",
+            "per_site_scaling_enabled": false,
+            "reserved": true,
+            "resource_group_name": "eventhub-rg",
+            "sku_name": "B1",
+            "tags": {},
+            "timeouts": null,
+            "worker_count": 1,
+            "zone_balancing_enabled": false
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjozNjAwMDAwMDAwMDAwLCJkZWxldGUiOjM2MDAwMDAwMDAwMDAsInJlYWQiOjMwMDAwMDAwMDAwMCwidXBkYXRlIjozNjAwMDAwMDAwMDAwfSwic2NoZW1hX3ZlcnNpb24iOiIxIn0=",
+          "dependencies": [
+            "azurerm_resource_group.rg"
+          ]
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}
