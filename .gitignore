@@ -60,5 +60,10 @@ Thumbs.db
 logs/
 
 # Environment files (root level)
-.env
 *.env
+
+# Terraform secrets
+terraform/terraform.tfvars
+
+# Backend local development properties (if hardcoded)
+backend/src/main/resources/application-dev.properties
