@@ -33,5 +33,11 @@ build/
 .vscode/
 
 # Environment variables (if stored locally)
-.env
+../.env
 *.env
+
+# Terraform secrets
+terraform/terraform.tfvars
+
+# Backend local development properties (if hardcoded)
+backend/src/main/resources/application-dev.properties
