@@ -42,6 +42,7 @@ resource "azurerm_linux_web_app" "backend" {
     SPRING_DATA_MONGODB_URI = "mongodb+srv://${var.mongodb_username}:${var.mongodb_password}@${var.mongodb_cluster}.mongodb.net/${var.mongodb_database}?retryWrites=true&w=majority"
     JWT_SECRET              = var.jwt_secret
     SPRING_PROFILES_ACTIVE  = "prod"
+    WEBSITES_PORT           = "3000"
   }
 }
 
