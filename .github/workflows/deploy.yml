@@ -5,8 +5,11 @@ on:
     branches: [ main ]
 
 env:
-  ACR_LOGIN_SERVER: eventhubhiiico.azurecr.io
   AZURE_WEBAPP_NAME: eventhub-backend
+  AZURE_WEBAPP_PACKAGE_PATH: backend/target/*.jar
+  JAVA_VERSION: '17'
+  AZURE_STORAGE_ACCOUNT: eventhubfrontend
+  AZURE_STORAGE_CONTAINER: $web
 
 jobs:
   build-and-deploy-backend:
@@ -14,24 +17,48 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Log in to Azure Container Registry
-        uses: azure/docker-login@v1
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          login-server: ${{ secrets.ACR_LOGIN_SERVER }}
-          username: ${{ secrets.ACR_USERNAME }}
-          password: ${{ secrets.ACR_PASSWORD }}
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
 
-      - name: Build and push backend image
+      - name: Build with Maven
         run: |
-          docker build -f backend/Dockerfile -t ${{ secrets.ACR_LOGIN_SERVER }}/eventhub-backend:${{ github.sha }} -t ${{ secrets.ACR_LOGIN_SERVER }}/eventhub-backend:latest .
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/eventhub-backend:latest
+          cd backend
+          mvn clean package -DskipTests
 
-      - name: Deploy to Azure Web App (Container)
-        uses: azure/webapps-deploy@v3
+      - name: Deploy JAR to Azure Web App
+        uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: ${{ secrets.ACR_LOGIN_SERVER }}/eventhub-backend:latest
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
-  # Frontend: Azure Static Web App is already linked to GitHub (manual step)
-  # No action needed here – it will build automatically on push.
+  build-and-deploy-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies and build Angular
+        run: |
+          cd frontend
+          npm ci
+          npm run build --prod
+
+      - name: Upload to Azure Storage static website
+        uses: azure/CLI@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az storage blob upload-batch \
+              --account-name ${{ env.AZURE_STORAGE_ACCOUNT }} \
+              --account-key "${{ secrets.AZURE_STORAGE_KEY }}" \
+              --source "./frontend/dist/eventhub-frontend" \
+              --destination '$web' \
+              --overwrite
