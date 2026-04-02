@@ -5,12 +5,11 @@ on:
     branches: [ main ]
 
 env:
-  ACR_NAME: eventhubhiiico.azurecr.io
+  ACR_LOGIN_SERVER: eventhubhiiico.azurecr.io
   AZURE_WEBAPP_NAME: eventhub-backend
 
 jobs:
-  deploy-backend:
-    name: Build & Deploy Backend
+  build-and-deploy-backend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,43 +23,15 @@ jobs:
 
       - name: Build and push backend image
         run: |
-          docker build -f Dockerfile.backend \
-            -t ${{ secrets.ACR_LOGIN_SERVER }}/eventhub-backend:${{ github.sha }} \
-            -t ${{ secrets.ACR_LOGIN_SERVER }}/eventhub-backend:latest .
+          docker build -f backend/Dockerfile -t ${{ secrets.ACR_LOGIN_SERVER }}/eventhub-backend:${{ github.sha }} -t ${{ secrets.ACR_LOGIN_SERVER }}/eventhub-backend:latest .
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/eventhub-backend:latest
 
-      - name: Deploy to Azure Web App
+      - name: Deploy to Azure Web App (Container)
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           images: ${{ secrets.ACR_LOGIN_SERVER }}/eventhub-backend:latest
 
-  deploy-frontend:
-    name: Build & Deploy Frontend
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Build frontend image
-        run: |
-          docker build -f Dockerfile.frontend \
-            -t eventhub-frontend:latest .
-
-      - name: Extract build artifacts
-        run: |
-          docker create --name temp eventhub-frontend:latest
-          docker cp temp:/usr/share/nginx/html/. ./dist-output/
-          docker rm temp
-
-      - name: Upload to Azure Storage
-        uses: azure/CLI@v2
-        with:
-          azcliversion: latest
-          inlineScript: |
-            az storage blob upload-batch \
-              --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} \
-              --account-key "${{ secrets.AZURE_STORAGE_KEY }}" \
-              --source "./dist-output" \
-              --destination '$web' \
-              --overwrite
+  # Frontend: Azure Static Web App is already linked to GitHub (manual step)
+  # No action needed here – it will build automatically on push.
