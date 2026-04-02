@@ -67,3 +67,7 @@ terraform/terraform.tfvars
 
 # Backend local development properties (if hardcoded)
 backend/src/main/resources/application-dev.properties
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/.terraform/
+terraform/terraform.tfvars
