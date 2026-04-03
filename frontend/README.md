@@ -1,181 +1,99 @@
-# EventHub – Frontend (Angular 17+)
+# EventHub – Frontend
 
-EventHub is a full‑stack web application for discovering and managing local events.  
-This repository contains the **Angular frontend** (standalone components) that consumes the Spring Boot REST API.
-
----
-
-## Table of Contents
-
-- [Project Overview](#project-overview)
-- [Backend Structure](#backend-structure)
-- [Frontend Structure](#frontend-structure)
-- [Running the Application](#running-the-application)
-- [API Endpoints](#api-endpoints)
-- [Development Commands](#development-commands)
-- [Built With](#built-with)
+Angular 17+ standalone application for EventHub – discover events, RSVP, create events, and manage profile.
 
 ---
 
-## Project Overview
+## Tech Stack
+- Angular 17+ (standalone components)
+- TypeScript, RxJS
+- CSS (custom, responsive)
+- Font Awesome 6
 
-- **Frontend**: Angular 17+ (standalone components) – built with TypeScript, RxJS, and custom CSS (BEM naming).
-- **Backend**: Spring Boot 3.2 with Spring Security, JWT authentication, and MongoDB Atlas.
-- **Database**: MongoDB Atlas (or local MongoDB) – data stored as JSON documents.
-
-The frontend provides:
-- Public pages: event catalog, event details, login, register.
-- Private pages: my events dashboard, event creation/editing, profile settings.
-- Interactive features: RSVP, commenting, search/filter, pagination.
-
----
-
-## Backend Structure
-
-- The backend is located in the `backend/` folder.
----
-## Frontend Structure
+## Project Structure
 
 ```
-├── frontend/                          # Angular standalone frontend
-│   ├── angular.json
-│   ├── package.json
-│   ├── tsconfig.json
-│   ├── src/
-│   │   ├── index.html
-│   │   ├── main.ts
-│   │   ├── styles.css                 # Global styles (reset, variables, components)
-│   │   └── app/
-│   │       ├── app.component.ts
-│   │       ├── app.component.html
-│   │       ├── app.component.css      # Navbar styles
-│   │       ├── app.config.ts          # ProvideHttpClient, interceptors, router
-│   │       ├── app.routes.ts          # Routing table (lazy loading)
-│   │       ├── core/
-│   │       │   ├── guards/
-│   │       │   │   ├── auth.guard.ts
-│   │       │   │   └── logged-in.guard.ts
-│   │       │   ├── interceptors/
-│   │       │   │   └── auth.interceptor.ts
-│   │       │   └── services/
-│   │       │       ├── auth.service.ts
-│   │       │       └── event.service.ts
-│   │       ├── shared/
-│   │       │   ├── components/
-│   │       │   │   └── event-card/
-│   │       │   │       ├── event-card.component.ts
-│   │       │   │       ├── event-card.component.html
-│   │       │   │       └── event-card.component.css
-│   │       │   ├── models/
-│   │       │   │   ├── user.ts
-│   │       │   │   ├── event.ts
-│   │       │   │   └── comment.ts
-│   │       │   └── pipes/            # (optional, empty)
-│   │       └── features/
-│   │           ├── event/
-│   │           │   ├── event-catalog/
-│   │           │   │   ├── event-catalog.component.ts
-│   │           │   │   ├── event-catalog.component.html
-│   │           │   │   └── event-catalog.component.css
-│   │           │   ├── event-details/
-│   │           │   │   ├── event-details.component.ts
-│   │           │   │   ├── event-details.component.html
-│   │           │   │   └── event-details.component.css
-│   │           │   ├── event-create/
-│   │           │   │   ├── event-create.component.ts
-│   │           │   │   ├── event-create.component.html
-│   │           │   │   └── event-create.component.css
-│   │           │   └── event-edit/
-│   │           │       ├── event-edit.component.ts
-│   │           │       ├── event-edit.component.html
-│   │           │       └── event-edit.component.css
-│   │           └── user/
-│   │               ├── login/
-│   │               │   ├── login.component.ts
-│   │               │   ├── login.component.html
-│   │               │   └── login.component.css
-│   │               ├── register/
-│   │               │   ├── register.component.ts
-│   │               │   ├── register.component.html
-│   │               │   └── register.component.css
-│   │               ├── profile/
-│   │               │   ├── profile.component.ts
-│   │               │   ├── profile.component.html
-│   │               │   └── profile.component.css
-│   │               └── my-events/
-│   │                   ├── my-events.component.ts
-│   │                   ├── my-events.component.html
-│   │                   └── my-events.component.css
-│   └── node_modules/                  # Ignored
-└── ... (other root files)
+src/app/
+├── core/ # Guards, interceptors, services (auth, event, geolocation)
+├── shared/ # Models, reusable components (event-card, comment-section, event-form, event-search, location-picker)
+├── features/ # Feature modules (home, about, event-catalog, event-details, event-create, event-edit, login, register, profile, my-events)
+├── app.config.ts
+├── app.routes.ts
+└── app.component.ts
 ```
 
-The frontend is built with **Angular standalone components** (no NgModules).  
-- All source code is in `src/app/`.
----
+## Running Locally
 
-## Running the Application
-Prerequisites
-- Node.js 18+ and npm
-- Java 17+ and Maven (for the backend)
-- MongoDB Atlas account (or local MongoDB)
----
-### Start the Backend
-```
-cd backend
-export MONGODB_USERNAME=your_db_username
-export MONGODB_PASSWORD=your_db_password
-./mvnw spring-boot:run
-```
+### Prerequisites
+- Node.js 20+
+- Angular CLI (`npm install -g @angular/cli`)
 
-The backend will start at http://localhost:3000.
+### Install dependencies
 
----
-### Start the Frontend
-
-```
-cd ../frontend
+```bash
 npm install
+```
+
+### Development server
+
+```bash
 ng serve
 ```
 
-The frontend will be available at http://localhost:4200.
+Navigate to [http://localhost:4200](http://localhost:4200). The application will automatically reload on code change
 
-## API Endpoints
+### Build for production
 
-The frontend consumes the following REST endpoints (all prefixed with /api):
+```bash
+ng build --prod
+```
 
-| Method | Endpoint               | Description                  | AuthService Required |
-|--------|------------------------|------------------------------|:-------------:|
-| POST   | /auth/register         | Register a new user          |      No       |
-| POST   | /auth/login            | Login – returns JWT token    |      No       |
-| GET    | /events                | List events (paginated)      |      No       |
-| GET    | /events/{id}           | Get event details            |      No       |
-| POST   | /events                | Create a new event           |     Yes       |
-| PUT    | /events/{id}           | Update an event              |  Yes (owner)  |
-| DELETE | /events/{id}           | Delete an event              |  Yes (owner)  |
-| POST   | /events/{id}/rsvp      | Toggle RSVP status           |      Yes      |
-| GET    | /events/user/created   | Events created by the user   |      Yes      |
-| GET    | /events/user/attending | Events the user is attending |      Yes      |
+The output is in `dist/frontend/browser/`.
 
-## Development Commands
+## Environment Configuration
 
-| Command	                | Description                               |
-|-------------------------|-------------------------------------------|
-| ng serve	               | Start dev server at http://localhost:4200 |
-| ng build	               | Build the project (output in dist/)       |
-| ng test                 | 	Run unit tests (Vitest)                  |       
-| ng generate component x | 	Generate a new component                 |
-| ng generate service x	  | Generate a new service                    |
+| File                                 | API URL                                                       |
+|--------------------------------------|---------------------------------------------------------------|
+| src/environments/environment.ts      | `http://localhost:3000/api` (development)                     |
+| src/environments/environment.prod.ts | `https://eventhub-backend.azurewebsites.net/api` (production) |
 
-## Built With
+## Features
+- Public pages: Home, About, event catalog, event details, login, register
+- Private pages (require authentication): My events (created + attending), create/edit event, profile
+- RSVP – toggle attendance on event details page
+- Comments – add comments to events (authenticated)
+- Geolocation – “Near you” carousel (within 50km)
+- Search/filter – by title/location, category, date (date picker in hero)
+- Responsive – works on mobile, tablet, desktop
 
-- Angular 17+ – standalone components, control flow syntax (@if, @for)
+## Docker
 
-- TypeScript – static typing
+A Dockerfile is provided for containerization. Build and run:
 
-- RxJS – observables, operators (debounceTime, catchError)
+```bash
+docker build -t eventhub-frontend .
+docker run -p 4200:80 eventhub-frontend
+```
 
-- CSS – custom styling with BEM methodology
+## Frontend Routes
 
-- Font Awesome – free icons (loaded from CDN)
+| Path               | Component               |      Guard      | Description                                       |
+|--------------------|-------------------------|:---------------:|---------------------------------------------------|
+| `/`                | `HomeComponent`         |        –        | Landing page with hero, features, featured events |
+| `/about`           | `AboutComponent`        |        –        | Information about the platform                    |
+| `/events`          | `EventCatalogComponent` |        –        | Event catalog with search, filters, carousels     |
+| `/events/:id`      | `EventDetailsComponent` |        –        | Detailed view of a single event                   |
+| `/login`           | `LoginComponent`        | `loggedInGuard` | Login form (redirects if already logged in)       |
+| `/register`        | `RegisterComponent`     | `loggedInGuard` | Registration form (redirects if logged in)        |
+| `/my-events`       | `MyEventsComponent`     |   `authGuard`   | User dashboard – created and attending events     |
+| `/events/create`   | `EventCreateComponent`  |   `authGuard`   | Form to create a new event                        |
+| `/events/edit/:id` | `EventEditComponent`    |   `authGuard`   | Form to edit an existing event (owner only)       |
+| `/profile`         | `ProfileComponent`      |   `authGuard`   | User profile settings (name, email)               |
+| `**` (wildcard)    | –                       |        –        | Redirects to `/events` (404 fallback)             |
+
+### Guards:
+
+- `loggedInGuard` – prevents authenticated users from accessing login/register (redirects to `/events`).
+- `authGuard` – prevents unauthenticated users from accessing private pages (redirects to `/login`).
+
+> All frontend routes are handled by Angular’s Router and are served by the static website (Azure Storage). The backend only serves the API endpoints and the health check (`/`).
