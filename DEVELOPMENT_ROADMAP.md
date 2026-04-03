@@ -85,7 +85,6 @@ User (logged in) → EventDetailsComponent → EventService → Backend (POST /a
 User clicks “Enable location” → Browser asks permission → GeolocationService returns coordinates → Frontend calculates distance to each event → Filters events within 50km → Updates “Near you” carousel
 ```
 
-
 ## Running the Full Stack Locally
 
 1. **Backend** (port 3000):  
@@ -99,6 +98,31 @@ cd frontend && ng serve
 ```
 
 3. **Open** [http://localhost:4200](http://localhost:4200)
+
+### Running with Docker (from pre‑built images)
+
+If you have the images available on Docker Hub, you can run the entire stack with a single command:
+
+```bash
+docker-compose up -d
+```
+
+To pull the images first and then run:
+
+```bash
+docker pull hiiico/eventhub-backend:latest
+docker pull hiiico/eventhub-frontend:latest
+docker-compose up -d
+```
+
+To run only the backend or frontend separately:
+
+```bash
+docker run -p 3000:3000 --env-file .env hiiico/eventhub-backend:latest
+docker run -p 4200:80 hiiico/eventhub-frontend:latest
+```
+
+> Note: The backend requires the .env file with MongoDB Atlas credentials. The frontend is a static nginx container serving the Angular app.
 
 ## Deployment to Azure
 

@@ -68,12 +68,21 @@ The output is in `dist/frontend/browser/`.
 
 ## Docker
 
-A Dockerfile is provided for containerization. Build and run:
+You can run the frontend as a standalone container from Docker Hub.
+
+### Pull from Docker Hub
 
 ```bash
-docker build -t eventhub-frontend .
-docker run -p 4200:80 eventhub-frontend
+docker pull hiiico/eventhub-frontend:latest
 ```
+
+### Run the container
+
+```bash
+docker run -p 4200:80 hiiico/eventhub-frontend:latest
+```
+
+> The frontend container serves the Angular app via nginx. All client‑side routing (e.g., `/events`) works because nginx is configured to fallback to `index.html`.
 
 ## Frontend Routes
 
