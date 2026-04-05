@@ -13,6 +13,6 @@ public class HealthController {
 
     @GetMapping("/robots933456.txt")
     public String robots() {
-        return "OK";
+        return "Backend status OK";
     }
 }
