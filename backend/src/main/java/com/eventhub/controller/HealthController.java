@@ -8,11 +8,11 @@ public class HealthController {
 
     @GetMapping("/")
     public String health() {
-        return "OK";
+        return "Backend status is: OK";
     }
 
     @GetMapping("/robots933456.txt")
     public String robots() {
-        return "Backend status OK";
+        return "OK";
     }
 }
