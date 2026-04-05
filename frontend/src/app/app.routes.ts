@@ -10,7 +10,7 @@ import {HomeComponent} from './features/home/home.component';
 import {loggedInGuard} from './core/guards/logged-in.guard';
 import {EventCatalogComponent} from './features/event/event-catalog/event-catalog.component';
 import { authGuard} from './core/guards/auth.guard';
-import {AboutComponent} from './features/about-component/about.component';
+import {AboutComponent} from './features/about/about.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
