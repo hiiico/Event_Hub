@@ -8,7 +8,7 @@ public class HealthController {
 
     @GetMapping("/")
     public String health() {
-        return "Backend status is: OK";
+        return "OK";
     }
 
     @GetMapping("/robots933456.txt")
