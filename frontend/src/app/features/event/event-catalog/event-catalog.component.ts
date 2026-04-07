@@ -26,7 +26,7 @@ export class EventCatalogComponent implements OnInit {
   dateFilter = '';
   dateFilterLabel = 'All';
   currentPage = 0;
-  pageSize = 10;
+  pageSize = 4;
   totalPages = 1;
   userLocation: { lat: number; lon: number } | null = null;
   locationLoading = false;
