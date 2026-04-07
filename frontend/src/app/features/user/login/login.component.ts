@@ -14,13 +14,19 @@ export class LoginComponent {
   email = '';
   password = '';
   error = '';
+  loading = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit() {
+    if (this.loading) return;
+    this.loading = true;
     this.authService.login(this.email, this.password).subscribe({
       next: () => this.router.navigate(['/events']),
-      error: () => this.error = 'Invalid credentials'
+      error: () => {
+        this.error = 'Invalid credentials';
+        this.loading = false;
+      }
     });
   }
 }

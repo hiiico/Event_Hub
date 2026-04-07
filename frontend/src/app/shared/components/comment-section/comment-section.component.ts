@@ -28,6 +28,7 @@ export class CommentSectionComponent {
   ) {}
 
   addComment() {
+    if (this.submitting) return;
     if (!this.newComment.trim()) return;
     if (!this.eventId) {
       this.error = 'Event ID is missing';

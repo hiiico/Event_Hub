@@ -28,6 +28,7 @@ export class ProfileComponent implements OnInit {
   }
 
   onSubmit() {
+    if (this.loading) return;
     this.loading = true;
     this.successMessage = '';
     this.errorMessage = '';

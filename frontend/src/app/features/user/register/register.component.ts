@@ -26,6 +26,7 @@ export class RegisterComponent {
   }
 
   onSubmit() {
+    if (this.loading) return;
     if (this.passwordMismatch) return;
     this.loading = true;
     this.error = '';
