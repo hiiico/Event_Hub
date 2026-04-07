@@ -53,6 +53,7 @@ export class EventDetailsComponent implements OnInit {
   }
 
   toggleRsvp() {
+    if (this.loading) return;
     if (!this.event) return;
     this.rsvpLoading = true;
     this.eventService.rsvpEvent(this.event.id).subscribe({

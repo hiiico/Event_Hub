@@ -21,6 +21,8 @@ export class MyEventsComponent implements OnInit {
   loadingAttending = false;
   errorCreated = false;
   errorAttending = false;
+  deleting = false;
+  cancelling = false;
 
   constructor(
     private eventService: EventService,
@@ -77,25 +79,35 @@ export class MyEventsComponent implements OnInit {
   }
 
   deleteEvent(id: string) {
+    if (this.deleting) return;
     if (confirm('Are you sure you want to delete this event?')) {
+      this.deleting = true;
       this.eventService.deleteEvent(id).subscribe({
-        next: () => this.loadCreatedEvents(),
-        error: (err) => console.error('Delete failed', err)
+        next: () => {
+          this.loadCreatedEvents();
+          this.deleting = false;
+        },
+        error: (err) => {
+          console.error('Delete failed', err);
+          this.deleting = false;
+        }
       });
     }
   }
 
   cancelRsvp(id: string) {
-    console.log('Canceling RSVP for event:', id);
+    if (this.cancelling) return;
+    this.cancelling = true;
     this.eventService.rsvpEvent(id).subscribe({
       next: () => {
-        console.log('RSVP cancelled successfully');
-        this.loadAttendingEvents(); // Refresh the list
+        this.loadAttendingEvents();
+        this.cancelling = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Failed to cancel RSVP:', err);
-        alert('Failed to cancel RSVP. Please try again.');
+        // alert('Failed to cancel RSVP. Please try again.');
+        this.cancelling = false;
       }
     });
   }

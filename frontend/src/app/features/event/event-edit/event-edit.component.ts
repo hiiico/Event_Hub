@@ -73,6 +73,7 @@ export class EventEditComponent implements OnInit {
   }
 
   onSubmit() {
+    if (this.loading) return;
     this.saving = true;
     this.error = '';
     this.eventService.updateEvent(this.event.id, this.event).subscribe({

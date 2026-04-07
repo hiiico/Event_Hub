@@ -33,6 +33,7 @@ export class EventCreateComponent {
   }
 
   onSubmit() {
+    if (this.loading) return;
     this.loading = true;
     this.error = '';
     this.eventService.createEvent(this.event).subscribe({
