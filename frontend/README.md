@@ -80,7 +80,7 @@ ng test
 
 - Mock dependencies with `jasmine.createSpyObj` to isolate the unit under test.
 
-### Example component test
+#### Example component test
 
 ```plantuml
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -107,7 +107,7 @@ describe('MyComponent', () => {
 });
 ```
 
-### For more details, see the [Angular testing guide](https://angular.dev/guide/testing).
+#### For more details, see the [Angular testing guide](https://angular.dev/guide/testing).
 
 ## Environment Configuration
 
@@ -141,7 +141,7 @@ docker pull hiiico/eventhub-frontend:latest
 docker run -p 4200:80 hiiico/eventhub-frontend:latest
 ```
 
-> The frontend container serves the Angular app via nginx. All client‑side routing (e.g., `/events`) works because nginx is configured to fallback to `index.html`.
+> The frontend container serves the Angular app via nginx. All client‑side routing (e.g., `/events`) works because nginx is configured to fall back to `index.html`.
 
 ## Frontend Routes
 
@@ -157,7 +157,7 @@ docker run -p 4200:80 hiiico/eventhub-frontend:latest
 | `/events/create`   | `EventCreateComponent`  |   `authGuard`   | Form to create a new event                        |
 | `/events/edit/:id` | `EventEditComponent`    |   `authGuard`   | Form to edit an existing event (owner only)       |
 | `/profile`         | `ProfileComponent`      |   `authGuard`   | User profile settings (name, email)               |
-| `**` (wildcard)    | –                       |        –        | Redirects to `/events` (404 fallback)             |
+| `**` (wildcard)    | –                       |        –        | Redirects to `/home` (404 fallback)               |
 
 ### Guards:
 
