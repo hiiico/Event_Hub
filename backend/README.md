@@ -57,6 +57,34 @@ Or set environment variables: `MONGODB_USERNAME`, `MONGODB_PASSWORD`, `JWT_SECRE
 ```
 The API will be available at [http://localhost:3000](http://localhost:3000).
 
+## Running Tests
+
+The project includes an automated test script that sets up a clean MongoDB container, runs all tests, and cleans up afterwards.
+
+### Linux / macOS (with Docker)
+
+```bash
+./run-tests.sh
+```
+
+This script does the following automatically:
+
+✅ Installs Docker (if missing – works on Ubuntu/Debian)
+
+✅ Starts the Docker daemon (if not already running)
+
+✅ Creates and starts a MongoDB container named mongodb-local (or reuses an existing one)
+
+✅ Waits for MongoDB to become ready
+
+✅ Executes mvn clean test
+
+✅ Stops the MongoDB container after the tests finish
+
+All tests (unit, integration, and repository) run against a real MongoDB instance, ensuring maximum reliability.
+
+> Note: The script assumes a Linux environment (Ubuntu/Debian) for Docker installation. For macOS or Windows, please install Docker Desktop manually and then run the script – it will still manage the container lifecycle.
+
 ## Backend API Endpoints
 
 | Method | Endpoint                     | Description                             | Auth Required |
