@@ -119,6 +119,8 @@ To run only the backend or frontend separately:
 
 ```bash
 docker run -p 3000:3000 --env-file .env hiiico/eventhub-backend:latest
+```
+```bash
 docker run -p 4200:80 hiiico/eventhub-frontend:latest
 ```
 
@@ -139,5 +141,4 @@ After deployment:
 
 - Add NgRx for state management
 - Implement Google Drive API for event flyers
-- Add unit tests (Jasmine/Karma, JUnit)
 - Use Azure Front Door for global load balancing

@@ -19,7 +19,7 @@
 | Backend   | Java 17+, Spring Boot 3.2.x, Spring Data MongoDB, Spring Security, JWT, Maven |
 | Frontend  | Angular 17+ (standalone), TypeScript, RxJS, Angular CLI, CSS (custom)         |
 | Database  | MongoDB Atlas (or local MongoDB)                                              |
-| Container | Docker + Docker Compose (optional)                                            |
+| Container | Docker + Docker Compose                                                       |
 | CI/CD     | GitHub Actions (backend JAR deployment)                                       |
 | Hosting   | Azure App Service (backend), Azure Storage (frontend)                         |
 
