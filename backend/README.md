@@ -57,11 +57,11 @@ Or set environment variables: `MONGODB_USERNAME`, `MONGODB_PASSWORD`, `JWT_SECRE
 ```
 The API will be available at [http://localhost:3000](http://localhost:3000).
 
-## Running Tests
+### Running Tests
 
 The project includes an automated test script that sets up a clean MongoDB container, runs all tests, and cleans up afterwards.
 
-### Linux / macOS (with Docker)
+#### Linux / macOS (with Docker)
 
 ```bash
 ./run-tests.sh

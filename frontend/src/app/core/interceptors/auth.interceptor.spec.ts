@@ -1,17 +1,40 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpInterceptorFn } from '@angular/common/http';
-
+import { HttpInterceptorFn, HttpRequest, HttpHandlerFn } from '@angular/common/http';
 import { authInterceptor } from './auth.interceptor';
+import { AuthService } from '../services/auth/auth.service';
 
 describe('authInterceptor', () => {
-  const interceptor: HttpInterceptorFn = (req, next) =>
-    TestBed.runInInjectionContext(() => authInterceptor(req, next));
+  let authServiceMock: jasmine.SpyObj<AuthService>;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    authServiceMock = jasmine.createSpyObj('AuthService', ['getToken']);
+    TestBed.configureTestingModule({
+      providers: [{ provide: AuthService, useValue: authServiceMock }]
+    });
   });
 
-  it('should be created', () => {
-    expect(interceptor).toBeTruthy();
+  it('should add Authorization header when token exists', () => {
+    authServiceMock.getToken.and.returnValue('fake-token');
+    const req = new HttpRequest('GET', '/test');
+    const next: HttpHandlerFn = jasmine.createSpy().and.callFake((req) => {
+      expect(req.headers.has('Authorization')).toBeTrue();
+      expect(req.headers.get('Authorization')).toBe('Bearer fake-token');
+      return {} as any;
+    });
+
+    TestBed.runInInjectionContext(() => authInterceptor(req, next));
+    expect(next).toHaveBeenCalled();
+  });
+
+  it('should not add Authorization header when token is null', () => {
+    authServiceMock.getToken.and.returnValue(null);
+    const req = new HttpRequest('GET', '/test');
+    const next: HttpHandlerFn = jasmine.createSpy().and.callFake((req) => {
+      expect(req.headers.has('Authorization')).toBeFalse();
+      return {} as any;
+    });
+
+    TestBed.runInInjectionContext(() => authInterceptor(req, next));
+    expect(next).toHaveBeenCalled();
   });
 });
