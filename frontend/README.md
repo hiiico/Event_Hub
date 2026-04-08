@@ -50,6 +50,65 @@ ng build --prod
 
 The output is in `dist/frontend/browser/`.
 
+## Testing
+
+This project uses [Jasmine](https://jasmine.github.io/) as the testing framework and [Karma](https://karma-runner.github.io/) as the test runner.
+
+### Running unit tests
+
+```bash
+ng test
+```
+
+- Karma will launch a Chrome browser instance and execute all `*.spec.ts` files.
+
+- The tests run in watch mode by default – they will automatically re-run when you modify a source or test file.
+
+- To run the tests once and exit (useful for CI), set `singleRun: true` in `karma.conf.js`.
+
+### Important notes
+- No backend required – all API calls are mocked using Jasmine spies.
+
+- Zone.js is loaded automatically – the configuration ensures `fakeAsync` and `waitForAsync` work correctly.
+
+- RouterLink components are tested with `RouterTestingModule` to avoid missing ActivatedRoute providers.
+
+### Writing tests
+- Place test files next to the code they test, using the `.spec.ts` suffix.
+
+- Use `TestBed.configureTestingModule` to set up component testing modules.
+
+- Mock dependencies with `jasmine.createSpyObj` to isolate the unit under test.
+
+### Example component test
+
+```plantuml
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MyComponent } from './my.component';
+import { RouterTestingModule } from '@angular/router/testing';
+
+describe('MyComponent', () => {
+  let component: MyComponent;
+  let fixture: ComponentFixture<MyComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [MyComponent, RouterTestingModule]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(MyComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+```
+
+### For more details, see the [Angular testing guide](https://angular.dev/guide/testing).
+
 ## Environment Configuration
 
 | File                                 | API URL                                                       |

@@ -8,8 +8,17 @@ module.exports = function(config) {
       require('karma-coverage'),
       require('karma-jasmine-html-reporter')
     ],
+    files: [
+      'src/test-setup.ts',                     // ← global setup (imports zone.js)
+      { pattern: 'src/**/*.spec.ts', watched: false }
+    ],
+    preprocessors: {
+      'src/test-setup.ts': ['coverage'],
+      'src/**/*.spec.ts': ['coverage']
+    },
     client: {
-      clearContext: false
+      clearContext: false,
+      jasmine: { random: false }
     },
     reporters: ['progress', 'kjhtml'],
     port: 9876,
@@ -18,6 +27,8 @@ module.exports = function(config) {
     autoWatch: true,
     browsers: ['Chrome'],
     singleRun: false,
-    restartOnFileChange: true
+    restartOnFileChange: true,
+    browserNoActivityTimeout: 60000,
+    captureTimeout: 120000
   });
 };
