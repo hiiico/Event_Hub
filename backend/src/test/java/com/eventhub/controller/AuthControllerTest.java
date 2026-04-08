@@ -28,6 +28,9 @@ public class AuthControllerTest {
     @MockBean
     private AuthService authService;
 
+    @MockBean
+    private JwtUtil jwtUtil;
+
     @Autowired
     private ObjectMapper objectMapper;
 

@@ -44,6 +44,9 @@ public class EventControllerTest {
     @MockBean
     private UserRepository userRepository;
 
+    @MockBean
+    private JwtUtil jwtUtil;
+
     @Autowired
     private ObjectMapper objectMapper;
 
