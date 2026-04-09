@@ -26,63 +26,183 @@ EventHub is a full‑stack web application for discovering and managing local ev
 
 ## Development Phases
 
-### Phase 1: Backend Core (Completed)
-- Set up Spring Boot with MongoDB and JWT
-- User, Event, Comment models and repositories
-- REST controllers: auth, events, users
-- CRUD operations, RSVP, comments
-- Security: JWT filter, CORS, environment variables
+graph TD
+A[Phase 1: Backend Core<br/>Spring Boot, MongoDB, JWT] --> B[Phase 2: Frontend Foundation<br/>Angular, Services, Public Pages]
+B --> C[Phase 3: Private Features<br/>My Events, Create/Edit, Profile, RSVP]
+C --> D[Phase 4: Polish & Geolocation<br/>Near you, Search/Filter, Route Guards]
+D --> E[Phase 5: Azure Deployment<br/>Terraform, GitHub Actions, App Service + Storage]
 
-### Phase 2: Frontend Foundation (Completed)
-- Angular standalone app with routing
-- Core services (Auth, Event, Geolocation)
-- Public pages: home, about, catalog, details, login, register
-- Shared components: event card, search bar, location picker, comment section
-- Responsive styling (CSS Grid, Flexbox)
 
-### Phase 3: Private Features (Completed)
-- My events dashboard (created + attending)
-- Create / edit event forms (shared form component)
-- Profile settings (update name/email)
-- RSVP toggle and comments UI
 
-### Phase 4: Polish & Geolocation (Completed)
-- Geolocation – “Near you” carousel (distance 50km)
-- Date picker filter in hero graphic
-- Client‑side search and filtering
-- Loading/error states, empty state messages
-- Route guards (auth, logged‑in)
+[//]: # (### Phase 1: Backend Core &#40;Completed&#41;)
 
-### Phase 5: Azure Deployment (Completed)
-- Terraform for infrastructure (App Service, Storage Account, Resource Group)
-- GitHub Actions workflow:
-    - Build backend JAR with Maven
-    - Deploy JAR to Azure App Service (publish profile)
-    - Build Angular frontend and upload to Azure Storage static website (`$web`)
-- Health check endpoints added to satisfy Azure probes
+[//]: # (- Set up Spring Boot with MongoDB and JWT)
+
+[//]: # (- User, Event, Comment models and repositories)
+
+[//]: # (- REST controllers: auth, events, users)
+
+[//]: # (- CRUD operations, RSVP, comments)
+
+[//]: # (- Security: JWT filter, CORS, environment variables)
+
+[//]: # ()
+[//]: # (### Phase 2: Frontend Foundation &#40;Completed&#41;)
+
+[//]: # (- Angular standalone app with routing)
+
+[//]: # (- Core services &#40;Auth, Event, Geolocation&#41;)
+
+[//]: # (- Public pages: home, about, catalog, details, login, register)
+
+[//]: # (- Shared components: event card, search bar, location picker, comment section)
+
+[//]: # (- Responsive styling &#40;CSS Grid, Flexbox&#41;)
+
+[//]: # ()
+[//]: # (### Phase 3: Private Features &#40;Completed&#41;)
+
+[//]: # (- My events dashboard &#40;created + attending&#41;)
+
+[//]: # (- Create / edit event forms &#40;shared form component&#41;)
+
+[//]: # (- Profile settings &#40;update name/email&#41;)
+
+[//]: # (- RSVP toggle and comments UI)
+
+[//]: # ()
+[//]: # (### Phase 4: Polish & Geolocation &#40;Completed&#41;)
+
+[//]: # (- Geolocation – “Near you” carousel &#40;distance 50km&#41;)
+
+[//]: # (- Date picker filter in hero graphic)
+
+[//]: # (- Client‑side search and filtering)
+
+[//]: # (- Loading/error states, empty state messages)
+
+[//]: # (- Route guards &#40;auth, logged‑in&#41;)
+
+[//]: # ()
+[//]: # (### Phase 5: Azure Deployment &#40;Completed&#41;)
+
+[//]: # (- Terraform for infrastructure &#40;App Service, Storage Account, Resource Group&#41;)
+
+[//]: # (- GitHub Actions workflow:)
+
+[//]: # (    - Build backend JAR with Maven)
+
+[//]: # (    - Deploy JAR to Azure App Service &#40;publish profile&#41;)
+
+[//]: # (    - Build Angular frontend and upload to Azure Storage static website &#40;`$web`&#41;)
+
+[//]: # (- Health check endpoints added to satisfy Azure probes)
 
 ## Sequence Diagrams
 
 ### User Registration
 
-```mermaid
-    User → Frontend → AuthService → Backend (POST /api/auth/register) → MongoDB (save user) → Backend returns token → Frontend stores token & user → Navigate to /events
+```sequenceDiagram
+participant User
+participant Frontend
+participant AuthService
+participant Backend as Backend (POST /api/auth/register)
+participant MongoDB
+
+    User->>Frontend: Submit registration form
+    Frontend->>AuthService: register(name, email, password)
+    AuthService->>Backend: POST /api/auth/register
+    Backend->>MongoDB: Save user
+    MongoDB-->>Backend: User saved
+    Backend-->>AuthService: Return JWT token
+    AuthService-->>Frontend: Store token & user
+    Frontend->>Frontend: Navigate to /events
 ```
+[//]: # (```mermaid)
+
+[//]: # (    User → Frontend → AuthService → Backend &#40;POST /api/auth/register&#41; → MongoDB &#40;save user&#41; → Backend returns token → Frontend stores token & user → Navigate to /events)
+
+[//]: # (```)
 
 ### Create Event
 
-```mermaid
-User (logged in) → Frontend → EventFormComponent → EventService → Backend (POST /api/events) with JWT → MongoDB (save event) → Backend returns created event → Frontend navigates to event details
+```sequenceDiagram
+    participant User as User (logged in)
+    participant Frontend
+    participant EventFormComponent
+    participant EventService
+    participant Backend as Backend (POST /api/events)
+    participant MongoDB
+
+    User->>EventFormComponent: Fill event data & submit
+    EventFormComponent->>EventService: createEvent(eventData)
+    EventService->>Backend: POST /api/events (with JWT)
+    Backend->>MongoDB: Save event
+    MongoDB-->>Backend: Event saved
+    Backend-->>EventService: Return created event
+    EventService-->>EventFormComponent: Event object
+    EventFormComponent->>Frontend: Navigate to event details
 ```
+
+
+[//]: # (```mermaid)
+
+[//]: # ()
+[//]: # (User &#40;logged in&#41; → Frontend → EventFormComponent → EventService → Backend &#40;POST /api/events&#41; with JWT → MongoDB &#40;save event&#41; → Backend returns created event → Frontend navigates to event details)
+
+[//]: # ()
+[//]: # (```)
+
 
 ### RSVP to Event
-```mermaid
-User (logged in) → EventDetailsComponent → EventService → Backend (POST /api/events/{id}/rsvp) → MongoDB (add user to attendees) → Backend 200 OK → Frontend updates local attendees list and button state
+
+```sequenceDiagram
+    participant User as User (logged in)
+    participant EventDetailsComponent
+    participant EventService
+    participant Backend as Backend (POST /api/events/{id}/rsvp)
+    participant MongoDB
+
+    User->>EventDetailsComponent: Click RSVP button
+    EventDetailsComponent->>EventService: rsvpEvent(eventId)
+    EventService->>Backend: POST /api/events/{id}/rsvp
+    Backend->>MongoDB: Add user to attendees list
+    MongoDB-->>Backend: Update confirmed
+    Backend-->>EventService: 200 OK
+    EventService-->>EventDetailsComponent: Success
+    EventDetailsComponent->>EventDetailsComponent: Update attendees list & button state
 ```
 
+
+[//]: # (```mermaid)
+
+[//]: # (User &#40;logged in&#41; → EventDetailsComponent → EventService → Backend &#40;POST /api/events/{id}/rsvp&#41; → MongoDB &#40;add user to attendees&#41; → Backend 200 OK → Frontend updates local attendees list and button state)
+
+[//]: # (```)
+
 ### Geolocation “Near you”
+
+```sequenceDiagram
+    participant User
+    participant Frontend
+    participant GeolocationService
+    participant EventList as Event List (carousel)
+
+    User->>Frontend: Click "Enable location"
+    Frontend->>GeolocationService: getCurrentPosition()
+    GeolocationService->>User: Browser asks permission
+    User-->>GeolocationService: Allow
+    GeolocationService-->>Frontend: Return coordinates (lat, lng)
+    Frontend->>Frontend: Calculate distance to each event
+    Frontend->>Frontend: Filter events within 50km
+    Frontend->>EventList: Update "Near you" carousel
+```
+
+
  ```mermaid
+
 User clicks “Enable location” → Browser asks permission → GeolocationService returns coordinates → Frontend calculates distance to each event → Filters events within 50km → Updates “Near you” carousel
+
 ```
 
 ## Running the Full Stack Locally
