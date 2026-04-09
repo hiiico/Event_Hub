@@ -25,14 +25,13 @@ EventHub is a full‑stack web application for discovering and managing local ev
 | Hosting   | Azure App Service (backend), Azure Storage (frontend)                         |
 
 ## Development Phases
-
+```mermaid
 graph TD
-A[Phase 1: Backend Core<br/>Spring Boot, MongoDB, JWT] --> B[Phase 2: Frontend Foundation<br/>Angular, Services, Public Pages]
-B --> C[Phase 3: Private Features<br/>My Events, Create/Edit, Profile, RSVP]
-C --> D[Phase 4: Polish & Geolocation<br/>Near you, Search/Filter, Route Guards]
-D --> E[Phase 5: Azure Deployment<br/>Terraform, GitHub Actions, App Service + Storage]
-
-
+A[Phase 1: Backend Core<br/>Spring Boot, MongoDB, JWT] --> B[Phase 2: Frontend Foundation<br/>Angular, Services, Public Pages];
+B --> C[Phase 3: Private Features<br/>My Events, Create/Edit, Profile, RSVP];
+C --> D[Phase 4: Polish & Geolocation<br/>Near you, Search/Filter, Route Guards];
+D --> E[Phase 5: Azure Deployment<br/>Terraform, GitHub Actions, App Service + Storage];
+```
 
 [//]: # (### Phase 1: Backend Core &#40;Completed&#41;)
 
@@ -127,12 +126,12 @@ participant MongoDB
 ### Create Event
 
 ```sequenceDiagram
-    participant User as User (logged in)
-    participant Frontend
-    participant EventFormComponent
-    participant EventService
-    participant Backend as Backend (POST /api/events)
-    participant MongoDB
+participant User as User (logged in)
+participant Frontend
+participant EventFormComponent
+participant EventService
+participant Backend as Backend (POST /api/events)
+participant MongoDB
 
     User->>EventFormComponent: Fill event data & submit
     EventFormComponent->>EventService: createEvent(eventData)
@@ -157,11 +156,11 @@ participant MongoDB
 ### RSVP to Event
 
 ```sequenceDiagram
-    participant User as User (logged in)
-    participant EventDetailsComponent
-    participant EventService
-    participant Backend as Backend (POST /api/events/{id}/rsvp)
-    participant MongoDB
+participant User as User (logged in)
+participant EventDetailsComponent
+participant EventService
+participant Backend as Backend (POST /api/events/{id}/rsvp)
+participant MongoDB
 
     User->>EventDetailsComponent: Click RSVP button
     EventDetailsComponent->>EventService: rsvpEvent(eventId)
@@ -183,10 +182,10 @@ participant MongoDB
 ### Geolocation “Near you”
 
 ```sequenceDiagram
-    participant User
-    participant Frontend
-    participant GeolocationService
-    participant EventList as Event List (carousel)
+participant User
+participant Frontend
+participant GeolocationService
+participant EventList as Event List (carousel)
 
     User->>Frontend: Click "Enable location"
     Frontend->>GeolocationService: getCurrentPosition()
@@ -199,11 +198,13 @@ participant MongoDB
 ```
 
 
- ```mermaid
+[//]: # ( ```mermaid)
 
-User clicks “Enable location” → Browser asks permission → GeolocationService returns coordinates → Frontend calculates distance to each event → Filters events within 50km → Updates “Near you” carousel
+[//]: # ()
+[//]: # (User clicks “Enable location” → Browser asks permission → GeolocationService returns coordinates → Frontend calculates distance to each event → Filters events within 50km → Updates “Near you” carousel)
 
-```
+[//]: # ()
+[//]: # (```)
 
 ## Running the Full Stack Locally
 
