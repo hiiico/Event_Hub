@@ -1,9 +1,11 @@
 # EventHub Development Roadmap
+---
 
 ## Documentation
 
 - [Backend README](./backend/README.md)
 - [Frontend README](./frontend/README.md)
+---
 
 ## Project Overview
 
@@ -23,8 +25,12 @@ EventHub is a full‑stack web application for discovering and managing local ev
 | Container | Docker + Docker Compose (optional)                                            |
 | CI/CD     | GitHub Actions (backend JAR deployment)                                       |
 | Hosting   | Azure App Service (backend), Azure Storage (frontend)                         |
+---
 
 ## Development Phases
+
+- [Project Board](https://github.com/users/hiiico/projects/14)
+
 ```mermaid
 graph TD
 A[Phase 1: Backend Core<br/>Spring Boot, MongoDB, JWT] --> B[Phase 2: Frontend Foundation<br/>Angular, Services, Public Pages];
@@ -32,70 +38,7 @@ B --> C[Phase 3: Private Features<br/>My Events, Create/Edit, Profile, RSVP];
 C --> D[Phase 4: Polish & Geolocation<br/>Near you, Search/Filter, Route Guards];
 D --> E[Phase 5: Azure Deployment<br/>Terraform, GitHub Actions, App Service + Storage];
 ```
-
-[//]: # (### Phase 1: Backend Core &#40;Completed&#41;)
-
-[//]: # (- Set up Spring Boot with MongoDB and JWT)
-
-[//]: # (- User, Event, Comment models and repositories)
-
-[//]: # (- REST controllers: auth, events, users)
-
-[//]: # (- CRUD operations, RSVP, comments)
-
-[//]: # (- Security: JWT filter, CORS, environment variables)
-
-[//]: # ()
-[//]: # (### Phase 2: Frontend Foundation &#40;Completed&#41;)
-
-[//]: # (- Angular standalone app with routing)
-
-[//]: # (- Core services &#40;Auth, Event, Geolocation&#41;)
-
-[//]: # (- Public pages: home, about, catalog, details, login, register)
-
-[//]: # (- Shared components: event card, search bar, location picker, comment section)
-
-[//]: # (- Responsive styling &#40;CSS Grid, Flexbox&#41;)
-
-[//]: # ()
-[//]: # (### Phase 3: Private Features &#40;Completed&#41;)
-
-[//]: # (- My events dashboard &#40;created + attending&#41;)
-
-[//]: # (- Create / edit event forms &#40;shared form component&#41;)
-
-[//]: # (- Profile settings &#40;update name/email&#41;)
-
-[//]: # (- RSVP toggle and comments UI)
-
-[//]: # ()
-[//]: # (### Phase 4: Polish & Geolocation &#40;Completed&#41;)
-
-[//]: # (- Geolocation – “Near you” carousel &#40;distance 50km&#41;)
-
-[//]: # (- Date picker filter in hero graphic)
-
-[//]: # (- Client‑side search and filtering)
-
-[//]: # (- Loading/error states, empty state messages)
-
-[//]: # (- Route guards &#40;auth, logged‑in&#41;)
-
-[//]: # ()
-[//]: # (### Phase 5: Azure Deployment &#40;Completed&#41;)
-
-[//]: # (- Terraform for infrastructure &#40;App Service, Storage Account, Resource Group&#41;)
-
-[//]: # (- GitHub Actions workflow:)
-
-[//]: # (    - Build backend JAR with Maven)
-
-[//]: # (    - Deploy JAR to Azure App Service &#40;publish profile&#41;)
-
-[//]: # (    - Build Angular frontend and upload to Azure Storage static website &#40;`$web`&#41;)
-
-[//]: # (- Health check endpoints added to satisfy Azure probes)
+---
 
 ## Sequence Diagrams
 
@@ -118,11 +61,6 @@ sequenceDiagram
     AuthService-->>Frontend: Store token & user
     Frontend->>Frontend: Navigate to /events
 ```
-[//]: # (```mermaid)
-
-[//]: # (    User → Frontend → AuthService → Backend &#40;POST /api/auth/register&#41; → MongoDB &#40;save user&#41; → Backend returns token → Frontend stores token & user → Navigate to /events)
-
-[//]: # (```)
 
 ### Create Event
 
@@ -145,15 +83,6 @@ sequenceDiagram
     EventFormComponent->>Frontend: Navigate to event details
 ```
 
-[//]: # (```mermaid)
-
-[//]: # ()
-[//]: # (User &#40;logged in&#41; → Frontend → EventFormComponent → EventService → Backend &#40;POST /api/events&#41; with JWT → MongoDB &#40;save event&#41; → Backend returns created event → Frontend navigates to event details)
-
-[//]: # ()
-[//]: # (```)
-
-
 ### RSVP to Event
 
 ```mermaid
@@ -174,13 +103,6 @@ sequenceDiagram
     EventDetailsComponent->>EventDetailsComponent: Update attendees list & button state
 ```
 
-
-[//]: # (```mermaid)
-
-[//]: # (User &#40;logged in&#41; → EventDetailsComponent → EventService → Backend &#40;POST /api/events/{id}/rsvp&#41; → MongoDB &#40;add user to attendees&#41; → Backend 200 OK → Frontend updates local attendees list and button state)
-
-[//]: # (```)
-
 ### Geolocation “Near you”
 
 ```mermaid
@@ -199,15 +121,7 @@ sequenceDiagram
     Frontend->>Frontend: Filter events within 50km
     Frontend->>EventList: Update "Near you" carousel
 ```
-
-
-[//]: # ( ```mermaid)
-
-[//]: # ()
-[//]: # (User clicks “Enable location” → Browser asks permission → GeolocationService returns coordinates → Frontend calculates distance to each event → Filters events within 50km → Updates “Near you” carousel)
-
-[//]: # ()
-[//]: # (```)
+---
 
 ## Running the Full Stack Locally
 
@@ -249,6 +163,7 @@ docker run -p 4200:80 hiiico/eventhub-frontend:latest
 ```
 
 > Note: The backend requires the .env file with MongoDB Atlas credentials. The frontend is a static nginx container serving the Angular app.
+---
 
 ## Deployment to Azure
 
@@ -260,9 +175,11 @@ Infrastructure can be provisioned with Terraform (see `terraform/` folder).
 After deployment:
 - Backend: [https://eventhub-backend.azurewebsites.net](https://eventhub-backend.azurewebsites.net)
 - Frontend: [https://eventhubfrontend.z28.web.core.windows.net](https://eventhubfrontend.z28.web.core.windows.net)
+---
 
 ## Future Improvements (Bonuses)
 
 - Add NgRx for state management
 - Implement Google Drive API for event flyers
 - Use Azure Front Door for global load balancing
+- ---
