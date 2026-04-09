@@ -10,6 +10,8 @@ Angular 17+ standalone application for EventHub – discover events, RSVP, creat
 - CSS (custom, responsive)
 - Font Awesome 6
 
+---
+
 ## Project Structure
 
 ```
@@ -21,6 +23,8 @@ src/app/
 ├── app.routes.ts
 └── app.component.ts
 ```
+
+---
 
 ## Running Locally
 
@@ -50,7 +54,9 @@ ng build --prod
 
 The output is in `dist/frontend/browser/`.
 
-## Testing
+---
+
+##  Running Tests
 
 This project uses [Jasmine](https://jasmine.github.io/) as the testing framework and [Karma](https://karma-runner.github.io/) as the test runner.
 
@@ -109,12 +115,39 @@ describe('MyComponent', () => {
 
 #### For more details, see the [Angular testing guide](https://angular.dev/guide/testing).
 
+### Running e2e Tests (Cypress)
+
+The frontend uses [Cypress](https://www.cypress.io/) for end‑to‑end testing. The full stack E2E tests (including backend and database) are orchestrated from the project root:
+
+```bash
+cd ../   # go to project root
+./run-e2e-tests.sh
+```
+
+This script automatically starts a disposable MongoDB container, builds and runs the backend, serves the frontend, executes all Cypress tests, and cleans up afterward.
+
+If you prefer to run Cypress tests against an already running backend (e.g., your development backend), you can execute the tests directly:
+
+```bash
+ng serve   # in one terminal
+# In another terminal:
+npx cypress open   # interactive mode
+# or
+npx cypress run    # headless mode
+```
+
+Make sure the backend is running and the environment variables (API URL) are correctly configured (e.g., in `src/environments/environment.ts`).
+
+---
+
 ## Environment Configuration
 
 | File                                 | API URL                                                       |
 |--------------------------------------|---------------------------------------------------------------|
 | src/environments/environment.ts      | `http://localhost:3000/api` (development)                     |
 | src/environments/environment.prod.ts | `https://eventhub-backend.azurewebsites.net/api` (production) |
+
+---
 
 ## Features
 - Public pages: Home, About, event catalog, event details, login, register
@@ -124,6 +157,8 @@ describe('MyComponent', () => {
 - Geolocation – “Near you” carousel (within 50km)
 - Search/filter – by title/location, category, date (date picker in hero)
 - Responsive – works on mobile, tablet, desktop
+
+---
 
 ## Docker
 
@@ -142,6 +177,8 @@ docker run -p 4200:80 hiiico/eventhub-frontend:latest
 ```
 
 > The frontend container serves the Angular app via nginx. All client‑side routing (e.g., `/events`) works because nginx is configured to fall back to `index.html`.
+
+---
 
 ## Frontend Routes
 
@@ -165,3 +202,5 @@ docker run -p 4200:80 hiiico/eventhub-frontend:latest
 - `authGuard` – prevents unauthenticated users from accessing private pages (redirects to `/login`).
 
 > All frontend routes are handled by Angular’s Router and are served by the static website (Azure Storage). The backend only serves the API endpoints and the health check (`/`).
+
+---

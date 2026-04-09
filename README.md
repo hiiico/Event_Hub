@@ -5,9 +5,9 @@
 
 ## Documentation
 - [Project Board](https://github.com/users/hiiico/projects/14)
-- [Backend README](./backend/README.md)
-- [Frontend README](./frontend/README.md)
-- [Development Roadmap](DEVELOPMENT_ROADMAP.md)
+- [Backend](./backend/README.md)
+- [Frontend](./frontend/README.md)
+- [Development](DEVELOPMENT_ROADMAP.md)
 
 ---
 
@@ -44,5 +44,37 @@ npm start
 For local development with a local backend, change `environment.prod.ts` to point to `http://localhost:3000/api`.
 
 Open [http://localhost:4200](http://localhost:4200)
+
+---
+
+## Testing
+
+### [Backend](backend/README.md#Running-Tests)
+
+### [Frontend](frontend/README.md#Running-Tests)
+
+### Running E2E Tests (Full Stack)
+
+The project also includes an end‑to‑end test script that starts a disposable MongoDB container, builds and runs the backend, serves the frontend, executes all Cypress tests, and cleans up everything afterward.
+
+```bash
+./run-e2e-tests.sh
+```
+
+#### What the script does automatically:
+
+- 🐳 Installs Docker (if missing – works on Ubuntu/Debian)
+- 🔄 Starts the Docker daemon (if not already running)
+- 🗄️ Creates a fresh MongoDB container named mongodb-e2e (replica set enabled)
+- 🔧 Builds the backend (mvn clean package -DskipTests) and starts it on port 3000 with the e2e profile
+- 🌐 Starts the Angular frontend (ng serve) on port 4200
+- ⏳ Waits for both services to become responsive
+- 🧪 Runs all Cypress E2E tests from frontend/cypress/e2e/
+- 🧹 Stops the backend, frontend, and removes the MongoDB container (no leftovers)
+
+All E2E tests run against a real MongoDB instance and a fully functional backend + frontend, ensuring maximum reliability.
+
+> Note: The script assumes a Linux environment (Ubuntu/Debian) for Docker installation. On macOS or Windows, install Docker Desktop manually; the script will still manage the container lifecycle.
+The backend is expected to run on port 3000 and the frontend on port 4200. Adjust the script if your setup uses different ports.
 
 ---
