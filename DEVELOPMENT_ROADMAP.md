@@ -101,12 +101,13 @@ D --> E[Phase 5: Azure Deployment<br/>Terraform, GitHub Actions, App Service + S
 
 ### User Registration
 
-```sequenceDiagram
-participant User
-participant Frontend
-participant AuthService
-participant Backend as Backend (POST /api/auth/register)
-participant MongoDB
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant AuthService
+    participant Backend as Backend (POST /api/auth/register)
+    participant MongoDB
 
     User->>Frontend: Submit registration form
     Frontend->>AuthService: register(name, email, password)
@@ -125,13 +126,14 @@ participant MongoDB
 
 ### Create Event
 
-```sequenceDiagram
-participant User as User (logged in)
-participant Frontend
-participant EventFormComponent
-participant EventService
-participant Backend as Backend (POST /api/events)
-participant MongoDB
+```mermaid
+sequenceDiagram
+    participant User as User (logged in)
+    participant Frontend
+    participant EventFormComponent
+    participant EventService
+    participant Backend as Backend (POST /api/events)
+    participant MongoDB
 
     User->>EventFormComponent: Fill event data & submit
     EventFormComponent->>EventService: createEvent(eventData)
@@ -142,7 +144,6 @@ participant MongoDB
     EventService-->>EventFormComponent: Event object
     EventFormComponent->>Frontend: Navigate to event details
 ```
-
 
 [//]: # (```mermaid)
 
@@ -155,12 +156,13 @@ participant MongoDB
 
 ### RSVP to Event
 
-```sequenceDiagram
-participant User as User (logged in)
-participant EventDetailsComponent
-participant EventService
-participant Backend as Backend (POST /api/events/{id}/rsvp)
-participant MongoDB
+```mermaid
+sequenceDiagram
+    participant User as User (logged in)
+    participant EventDetailsComponent
+    participant EventService
+    participant Backend as Backend (POST /api/events/{id}/rsvp)
+    participant MongoDB
 
     User->>EventDetailsComponent: Click RSVP button
     EventDetailsComponent->>EventService: rsvpEvent(eventId)
@@ -181,11 +183,12 @@ participant MongoDB
 
 ### Geolocation “Near you”
 
-```sequenceDiagram
-participant User
-participant Frontend
-participant GeolocationService
-participant EventList as Event List (carousel)
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant GeolocationService
+    participant EventList as Event List (carousel)
 
     User->>Frontend: Click "Enable location"
     Frontend->>GeolocationService: getCurrentPosition()
