@@ -1,9 +1,6 @@
 ![Event](https://img.shields.io/badge/Event-DD0031?style=for-the-badge&logo=angular&logoColor=white)![Hub](https://img.shields.io/badge/Hub-6CB252?style=for-the-badge&logo=spring&logoColor=white)
 #### Full‑Stack Event Management Application
 
-![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/https%3A%2F%2Fgithub.com%2Fusers%2Fhiiico%2Fprojects%2F14)
-
-
 ---
 
 ## Documentation
