@@ -77,4 +77,17 @@ All E2E tests run against a real MongoDB instance and a fully functional backend
 > Note: The script assumes a Linux environment (Ubuntu/Debian) for Docker installation. On macOS or Windows, install Docker Desktop manually; the script will still manage the container lifecycle.
 The backend is expected to run on port 3000 and the frontend on port 4200. Adjust the script if your setup uses different ports.
 
+If you prefer to run Cypress tests against an already running backend (e.g., your development backend), you can execute the tests directly:
+
+```bash
+ng serve   # in one terminal
+# In another terminal:
+npx cypress open   # interactive mode
+# or
+npx cypress run    # headless mode
+```
+
+Make sure the backend is running and the environment variables (API URL) are correctly configured (e.g., in `src/environments/environment.ts`).
+
+
 ---
