@@ -1,11 +1,10 @@
-# EventHub 
-
+![Event](https://img.shields.io/badge/Event-DD0031?style=for-the-badge&logo=angular&logoColor=white)![Hub](https://img.shields.io/badge/Hub-6CB252?style=for-the-badge&logo=spring&logoColor=white)
 #### Full‑Stack Event Management Application
 
 ---
 
 ## Documentation
-
+- [Project Board](https://github.com/users/hiiico/projects/14)
 - [Backend README](./backend/README.md)
 - [Frontend README](./frontend/README.md)
 - [Development Roadmap](DEVELOPMENT_ROADMAP.md)
