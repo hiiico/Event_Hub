@@ -12,6 +12,8 @@
 - Maven
 - MongoDB Atlas
 
+---
+
 ## Project Structure
 
 ```
@@ -33,6 +35,8 @@ backend/
 │ └── resources/
 │ └── application.properties
 ```
+
+---
 
 ## Running Locally
 
@@ -57,9 +61,13 @@ Or set environment variables: `MONGODB_USERNAME`, `MONGODB_PASSWORD`, `JWT_SECRE
 ```
 The API will be available at [http://localhost:3000](http://localhost:3000).
 
-### Running Tests
+---
 
-The project includes an automated test script that sets up a clean MongoDB container, runs all tests, and cleans up afterwards.
+## Running Tests
+
+### Unit / Integration Tests (Maven)
+
+The project includes an automated test script that sets up a clean MongoDB container, runs all tests, and cleans up afterward.
 
 #### Linux / macOS (with Docker)
 
@@ -85,6 +93,31 @@ All tests (unit, integration, and repository) run against a real MongoDB instanc
 
 > Note: The script assumes a Linux environment (Ubuntu/Debian) for Docker installation. For macOS or Windows, please install Docker Desktop manually and then run the script – it will still manage the container lifecycle.
 
+### e2e Tests (Cypress)
+
+The frontend uses [Cypress](https://www.cypress.io/) for end‑to‑end testing. The full stack E2E tests (including backend and database) are orchestrated from the project root:
+
+```bash
+cd ../   # go to project root
+./run-e2e-tests.sh
+```
+
+This script automatically starts a disposable MongoDB container, builds and runs the backend, serves the frontend, executes all Cypress tests, and cleans up afterwards.
+
+If you prefer to run Cypress tests against an already running backend (e.g., your development backend), you can execute the tests directly:
+
+```bash
+ng serve   # in one terminal
+# In another terminal:
+npx cypress open   # interactive mode
+# or
+npx cypress run    # headless mode
+```
+
+Make sure the backend is running and the environment variables (API URL) are correctly configured (e.g., in `src/environments/environment.ts`).
+
+---
+
 ## Backend API Endpoints
 
 | Method | Endpoint                     | Description                             | Auth Required |
@@ -104,6 +137,8 @@ All tests (unit, integration, and repository) run against a real MongoDB instanc
 | GET    | `/api/users/me`              | Get current user profile                |      Yes      |
 | PUT    | `/api/users/me`              | Update user profile (name, email)       |      Yes      |
 
+---
+
 ## Environment Variables
 
 | Variable                | Description                    |    Default     |
@@ -114,6 +149,8 @@ All tests (unit, integration, and repository) run against a real MongoDB instanc
 | JWT_SECRET              | JWT signing secret             | mySecretKey... |
 | WEBSITES_PORT           | Azure App Service port         |      3000      |
 
+---
+
 ## Deployment to Azure
 
 The backend is deployed as a JAR to Azure App Service via GitHub Actions.
@@ -122,3 +159,5 @@ Set the environment variables in the App Service configuration.
 ### Health Check
 
 Endpoints `/` and `/robots933456.txt` return `OK` to satisfy Azure health probes.
+
+---
