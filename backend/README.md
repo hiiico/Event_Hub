@@ -75,21 +75,42 @@ The project includes an automated test script that sets up a clean MongoDB conta
 ./run-tests.sh
 ```
 
-This script does the following automatically:
+```mermaid
+sequenceDiagram
+    participant User as Developer
+    participant Script as run-tests.sh
+    participant Docker as Docker Daemon
+    participant Container as MongoDB Container
+    participant Maven as Maven (mvn test)
 
-✅ Installs Docker (if missing – works on Ubuntu/Debian)
+    User->>Script: Execute ./run-tests.sh
+    Script->>Script: Check Docker installation
+    alt Docker missing
+        Script->>Script: Install Docker (Ubuntu/Debian)
+    end
+    Script->>Docker: Start Docker daemon (if not running)
+    Docker-->>Script: Daemon ready
+    Script->>Container: Create / start container (mongodb-local)
+    Container-->>Script: Container running
+    Script->>Container: Wait for MongoDB to become ready
+    Container-->>Script: Ready (ping successful)
+    Script->>Maven: Execute mvn clean test
+    Maven->>Container: Run tests (unit, integration, repository)
+    Container-->>Maven: Test results
+    Maven-->>Script: Build success/failure
+    Script->>Container: Stop and remove container
+    Container-->>Script: Cleanup done
+    Script-->>User: Exit with test result
+```
+#### What the diagram shows:
 
-✅ Starts the Docker daemon (if not already running)
+- The script handles Docker installation, daemon startup, and container lifecycle.
+- The MongoDB container is reused if already exists (optional, but the script may check).
+- All tests run against the real database inside the container.
+- After tests finish, the container is stopped and removed – no leftover state.
+- All tests (unit, integration, and repository) run against a real MongoDB instance, ensuring maximum reliability.
 
-✅ Creates and starts a MongoDB container named mongodb-local (or reuses an existing one)
-
-✅ Waits for MongoDB to become ready
-
-✅ Executes mvn clean test
-
-✅ Stops the MongoDB container after the tests finish
-
-All tests (unit, integration, and repository) run against a real MongoDB instance, ensuring maximum reliability.
+> Note: The script assumes a Linux environment (Ubuntu/Debian) for Docker installation. For macOS or Windows, please install Docker Desktop manually and then run the script – it will still manage the container lifecycle.
 
 #### Unit Test Example – `EventService.getAllEvents` (with Mockito)
 
@@ -106,8 +127,6 @@ sequenceDiagram
     Service-->>Test: return Page<EventResponse>
     Test->>Test: assertThat(content).hasSize(1)
 ```
-
-> Note: The script assumes a Linux environment (Ubuntu/Debian) for Docker installation. For macOS or Windows, please install Docker Desktop manually and then run the script – it will still manage the container lifecycle.
 
 #### Integration Test Example – `AuthService` (with real MongoDB `inside the disposable container`)
 
