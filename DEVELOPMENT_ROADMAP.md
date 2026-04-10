@@ -42,27 +42,52 @@ D --> E[Phase 5: Azure Deployment<br/>Terraform, GitHub Actions, App Service + S
 
 ## Sequence Diagrams
 
-### User Registration
+### User Registration (with NgRx)
 
-```mermaid
-sequenceDiagram
+What changed:
+
+- `AuthService` now dispatches an action instead of calling the API directly.
+- NgRx Effects handle the API call, success/failure actions, and the subsequent `loadUser` call.
+- Store manages the state (user, token) and notifies the component via selectors.
+- The final navigation is triggered by the component reacting to the `user$` observable (or a success action).
+
+The same pattern applies to the Login, Register, Logout and Profile flows.
+
+```sequenceDiagram
     participant User
-    participant Frontend
-    participant AuthService
+    participant Frontend (RegisterComponent)
+    participant AuthService (facade)
+    participant Store
+    participant AuthEffects
+    participant ApiService
     participant Backend as Backend (POST /api/auth/register)
     participant MongoDB
 
     User->>Frontend: Submit registration form
     Frontend->>AuthService: register(name, email, password)
-    AuthService->>Backend: POST /api/auth/register
+    AuthService->>Store: dispatch(register action)
+    Store->>AuthEffects: register action
+    AuthEffects->>ApiService: POST /api/auth/register
+    ApiService->>Backend: HTTP request
     Backend->>MongoDB: Save user
     MongoDB-->>Backend: User saved
-    Backend-->>AuthService: Return JWT token
-    AuthService-->>Frontend: Store token & user
-    Frontend->>Frontend: Navigate to /events
+    Backend-->>ApiService: JWT token
+    ApiService-->>AuthEffects: token
+    AuthEffects->>Store: dispatch(registerSuccess)
+    AuthEffects->>Store: dispatch(loadUser)
+    Store->>AuthEffects: loadUser action
+    AuthEffects->>ApiService: GET /users/me
+    ApiService->>Backend: HTTP request (with token)
+    Backend-->>ApiService: user object
+    ApiService-->>AuthEffects: user
+    AuthEffects->>Store: dispatch(loadUserSuccess)
+    Store->>Store: reducer updates user, token
+    Store-->>AuthService: user$ emits
+    AuthService-->>Frontend: user observable
+    Frontend->>User: redirect to /events
 ```
 
-### Create Event
+### Create Event (without NgRx)
 
 ```mermaid
 sequenceDiagram
@@ -83,7 +108,7 @@ sequenceDiagram
     EventFormComponent->>Frontend: Navigate to event details
 ```
 
-### RSVP to Event
+### RSVP to Event (without NgRx)
 
 ```mermaid
 sequenceDiagram
@@ -103,7 +128,7 @@ sequenceDiagram
     EventDetailsComponent->>EventDetailsComponent: Update attendees list & button state
 ```
 
-### Geolocation “Near you”
+### Geolocation “Near you” (without NgRx)
 
 ```mermaid
 sequenceDiagram

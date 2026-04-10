@@ -72,6 +72,32 @@ The project also includes an end‑to‑end test script that starts a disposable
 - 🧪 Runs all Cypress E2E tests from frontend/cypress/e2e/
 - 🧹 Stops the backend, frontend, and removes the MongoDB container (no leftovers)
 
+Login E2E Test – Sequence Diagram
+
+```sequenceDiagram
+    participant User as Cypress Test
+    participant Frontend as Angular App (port 4200)
+    participant Backend as Spring Boot (port 3000)
+    participant MongoDB as MongoDB Container
+
+    User->>Frontend: cy.visit('/login')
+    Frontend->>User: Login page loads
+    User->>Frontend: Type email & password, click "Sign in"
+    Frontend->>Backend: POST /api/auth/login
+    Backend->>MongoDB: Find user by email
+    MongoDB-->>Backend: User document
+    Backend-->>Frontend: JWT token + user data
+    Frontend->>Frontend: Store token in localStorage
+    Frontend->>User: Redirect to /events
+    User->>Frontend: cy.url().should('include', '/events')
+    Frontend->>Backend: GET /api/events?page=0&size=1000
+    Backend->>MongoDB: Find events
+    MongoDB-->>Backend: Events list
+    Backend-->>Frontend: Events JSON
+    Frontend->>User: Render event cards
+    User->>Frontend: cy.get('.event-card').should('have.length.at.least', 1)
+```
+
 All E2E tests run against a real MongoDB instance and a fully functional backend + frontend, ensuring maximum reliability.
 
 > Note: The script assumes a Linux environment (Ubuntu/Debian) for Docker installation. On macOS or Windows, install Docker Desktop manually; the script will still manage the container lifecycle.
@@ -88,6 +114,5 @@ npx cypress run    # headless mode
 ```
 
 Make sure the backend is running and the environment variables (API URL) are correctly configured (e.g., in `src/environments/environment.ts`).
-
 
 ---
