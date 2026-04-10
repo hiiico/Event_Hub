@@ -49,9 +49,9 @@ Open [http://localhost:4200](http://localhost:4200)
 
 ## Testing
 
-[Backend](backend/README.md#Running-Tests)
+- [Backend](backend/README.md#running-tests)
 
-[Frontend](frontend/README.md#Running-Tests)
+- [Frontend](frontend/README.md#running-tests)
 
 ### Running E2E Tests (Full Stack)
 

@@ -5,7 +5,7 @@
   <div class="navbar__menu">
     <a routerLink="/about" class="navbar__link">About</a>
     <a routerLink="/events" class="navbar__link">Events</a>
-    @if (authService.isAuthenticated()) {
+    @if (authService.isAuthenticated$ | async) {
       <a routerLink="/my-events" class="navbar__link">My Events</a>
       <a routerLink="/profile" class="avatar">
         <span class="avatar__circle">{{ (authService.user$ | async)?.name?.charAt(0) || 'U' }}</span>
@@ -17,7 +17,7 @@
     }
   </div>
   <div class="navbar__cta">
-    @if (authService.isAuthenticated()) {
+    @if (authService.isAuthenticated$ | async) {
       <button class="btn btn--accent" routerLink="/events/create">
         <i class="fas fa-plus-circle"></i> Create event
       </button>

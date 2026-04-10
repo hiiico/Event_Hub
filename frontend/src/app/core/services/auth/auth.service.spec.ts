@@ -1,38 +1,41 @@
 import { TestBed } from '@angular/core/testing';
+import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { AuthService } from './auth.service';
-import { ApiService } from '../api/api-service';
-import { of } from 'rxjs';
+import * as AuthActions from '../../../store/auth/auth.actions';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let apiServiceMock: jasmine.SpyObj<ApiService>;
+  let store: MockStore;
+  const initialState = { auth: { user: null, loading: false, error: null } };
 
   beforeEach(() => {
-    apiServiceMock = jasmine.createSpyObj('ApiService', [
-      'register', 'login', 'getCurrentUser', 'updateUser'
-    ]);
-    // Stub getCurrentUser to avoid errors during service instantiation
-    apiServiceMock.getCurrentUser.and.returnValue(of(null as any));
-
     TestBed.configureTestingModule({
-      providers: [AuthService, { provide: ApiService, useValue: apiServiceMock }]
+      providers: [
+        AuthService,
+        provideMockStore({ initialState })
+      ]
     });
-
-    localStorage.clear();
     service = TestBed.inject(AuthService);
+    store = TestBed.inject(MockStore);
+    spyOn(store, 'dispatch');
   });
 
-  it('should register and store token and user', (done) => {
-    const token = 'reg-token';
-    const user = { id: '1', name: 'John', email: 'john@example.com' };
-    apiServiceMock.register.and.returnValue(of(token));
-    // Override for this test
-    apiServiceMock.getCurrentUser.and.returnValue(of(user));
+  it('should dispatch login action', () => {
+    service.login('test@example.com', 'pass');
+    expect(store.dispatch).toHaveBeenCalledWith(
+      AuthActions.login({ email: 'test@example.com', password: 'pass' })
+    );
+  });
 
-    service.register('John', 'john@example.com', 'pass').subscribe(() => {
-      expect(localStorage.getItem('eventhub_token')).toBe(token);
-      expect(service.getCurrentUser()).toEqual(user);
-      done();
-    });
+  it('should dispatch register action', () => {
+    service.register('John', 'john@example.com', 'pass');
+    expect(store.dispatch).toHaveBeenCalledWith(
+      AuthActions.register({ name: 'John', email: 'john@example.com', password: 'pass' })
+    );
+  });
+
+  it('should dispatch logout action', () => {
+    service.logout();
+    expect(store.dispatch).toHaveBeenCalledWith(AuthActions.logout());
   });
 });

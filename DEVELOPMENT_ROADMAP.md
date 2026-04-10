@@ -177,9 +177,61 @@ After deployment:
 - Frontend: [https://eventhubfrontend.z28.web.core.windows.net](https://eventhubfrontend.z28.web.core.windows.net)
 ---
 
-## Future Improvements (Bonuses)
+## Completed Improvements
 
-- Add NgRx for state management
+### ✅ NgRx State Management for Authentication
+
+The authentication module now uses NgRx for predictable state management, side effect handling, and better scalability.
+
+- **State**: user, token, loading, error, updateSuccess
+- **Actions**: login, register, logout, updateUser, loadUser, clearError
+- **Effects**: handle API calls, token storage, navigation, auto‑clear success message
+- **Selectors**: user$, isAuthenticated$, loading$, error$, updateSuccess$
+- **Facade**: `AuthService` wraps the store, keeping components decoupled
+
+#### Sequence Diagram – NgRx Authentication Flow (Login)
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant LoginComponent
+    participant AuthService (facade)
+    participant Store
+    participant AuthEffects
+    participant ApiService
+    participant Backend
+    participant LocalStorage
+
+    User->>LoginComponent: Enter credentials & submit
+    LoginComponent->>AuthService: login(email, password)
+    AuthService->>Store: dispatch(login action)
+    Store->>AuthEffects: login action intercepted
+    AuthEffects->>ApiService: POST /auth/login
+    ApiService->>Backend: HTTP request
+    Backend-->>ApiService: JWT token
+    ApiService-->>AuthEffects: token
+    AuthEffects->>Store: dispatch(loginSuccess)
+    AuthEffects->>Store: dispatch(loadUser)
+    Store->>AuthEffects: loadUser action
+    AuthEffects->>ApiService: GET /users/me
+    ApiService->>Backend: HTTP request (with token)
+    Backend-->>ApiService: user object
+    ApiService-->>AuthEffects: user
+    AuthEffects->>Store: dispatch(loadUserSuccess)
+    Store->>LocalStorage: persist token & user
+    Store-->>AuthService: user$ emits
+    AuthService-->>LoginComponent: user observable
+    LoginComponent->>User: redirect to /events
+```
+
+The same pattern applies to `register`, `logout`, and `updateUser`. All components (`Header`, `Profile`, `Login`, `Register`) have been refactored to use the NgRx‑backed `AuthService` facade.
+
+---
+## Future Improvements (Bonuses)
+- ~~Add NgRx for state management~~ (✅ Completed for authentication)
+- Extend NgRx to Events, RSVP, and Geolocation modules
+- Add unit test coverage for NgRx effects and reducers
 - Implement Google Drive API for event flyers
 - Use Azure Front Door for global load balancing
-- ---
+
+---

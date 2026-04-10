@@ -1,22 +1,41 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LoginComponent } from './login.component';
 import { AuthService } from '../../../core/services/auth/auth.service';
-import { RouterTestingModule } from '@angular/router/testing';
-import { of } from 'rxjs';
+import { Router, ActivatedRoute } from '@angular/router';
+import { provideMockStore } from '@ngrx/store/testing';
+import { Subject } from 'rxjs';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let authServiceMock: jasmine.SpyObj<AuthService>;
+  let routerSpy: jasmine.SpyObj<Router>;
 
-  beforeEach(() => {
-    authServiceMock = jasmine.createSpyObj('AuthService', ['login', 'getCurrentUser', 'isAuthenticated']);
-    authServiceMock.login.and.returnValue(of('fake-token'));
-    authServiceMock.getCurrentUser.and.returnValue(null);
+  let userSubject: Subject<any>;
+  let loadingSubject: Subject<boolean>;
+  let errorSubject: Subject<string>;
 
-    TestBed.configureTestingModule({
-      imports: [LoginComponent, RouterTestingModule.withRoutes([])],
-      providers: [{ provide: AuthService, useValue: authServiceMock }]
+  beforeEach(async () => {
+    userSubject = new Subject();
+    loadingSubject = new Subject();
+    errorSubject = new Subject();
+
+    authServiceMock = jasmine.createSpyObj('AuthService', ['login', 'clearError'], {
+      user$: userSubject.asObservable(),
+      loading$: loadingSubject.asObservable(),
+      error$: errorSubject.asObservable()
+    });
+
+    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+
+    await TestBed.configureTestingModule({
+      imports: [LoginComponent],
+      providers: [
+        { provide: AuthService, useValue: authServiceMock },
+        { provide: Router, useValue: routerSpy },
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => null } } } },
+        provideMockStore({ initialState: {} })  // needed because AuthService injects Store
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(LoginComponent);
@@ -28,10 +47,28 @@ describe('LoginComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should login and navigate to /events', () => {
-    component.email = 'test@test.com';
+  it('should call authService.login on submit', () => {
+    component.email = 'test@example.com';
     component.password = 'pass';
     component.onSubmit();
-    expect(authServiceMock.login).toHaveBeenCalledWith('test@test.com', 'pass');
+    expect(authServiceMock.login).toHaveBeenCalledWith('test@example.com', 'pass');
+  });
+
+  it('should show loading state', () => {
+    loadingSubject.next(true);
+    fixture.detectChanges();
+    expect(component.loading).toBe(true);
+  });
+
+  it('should show error message', () => {
+    errorSubject.next('Invalid credentials');
+    fixture.detectChanges();
+    expect(component.error).toBe('Invalid credentials');
+  });
+
+  it('should navigate to /events on successful login', () => {
+    userSubject.next({ id: '1', name: 'Test', email: 'test@example.com' });
+    fixture.detectChanges();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/events']);
   });
 });

@@ -1,7 +1,9 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import {ApiService} from '../../../core/services/api/api-service';
+import {AuthService} from '../../../core/services/auth/auth.service';
+import {Subject, takeUntil} from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -10,9 +12,11 @@ import {ApiService} from '../../../core/services/api/api-service';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit, OnDestroy {
   private apiService = inject(ApiService);
+  private authService = inject(AuthService);
   private router = inject(Router);
+  private destroy$ = new Subject<void>();
 
   name = '';
   email = '';
@@ -21,21 +25,53 @@ export class RegisterComponent {
   loading = false;
   error = '';
 
+  ngOnInit(): void {
+    // Subscribe to loading state
+    this.authService.loading$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(loading => this.loading = loading);
+
+    // Subscribe to error state
+    this.authService.error$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(err => this.error = err || '');
+
+    // Navigate on successful registration
+    this.authService.user$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(user => {
+        if (user) this.router.navigate(['/events']);
+      });
+  }
+
   get passwordMismatch(): boolean {
     return this.password !== this.rePassword;
   }
+  // remove OnDestroy
+  // onSubmit() {
+  //   if (this.loading) return;
+  //   if (this.passwordMismatch) return;
+  //   this.loading = true;
+  //   this.error = '';
+  //   this.apiService.register(this.name, this.email, this.password).subscribe({
+  //     next: () => this.router.navigate(['/events']),
+  //     error: (err) => {
+  //       this.error = err.error?.message || 'Registration failed';
+  //       this.loading = false;
+  //     }
+  //   });
+  // }
 
   onSubmit() {
     if (this.loading) return;
     if (this.passwordMismatch) return;
-    this.loading = true;
+    if (this.password.length < 6) return;
     this.error = '';
-    this.apiService.register(this.name, this.email, this.password).subscribe({
-      next: () => this.router.navigate(['/events']),
-      error: (err) => {
-        this.error = err.error?.message || 'Registration failed';
-        this.loading = false;
-      }
-    });
+    this.authService.register(this.name, this.email, this.password);
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
