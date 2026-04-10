@@ -4,8 +4,8 @@ import { ApiService } from '../api/api-service';
 import { User } from '../../../shared/interfaces/user';
 import {Observable, tap} from 'rxjs';
 import {Store} from '@ngrx/store';
-import * as AuthActions from '../../../store/auth/auth.actions';
-import * as AuthSelectors from '../../../store/auth/auth.selectors';
+import * as AuthActions from '../../../store/auth/actions/auth.actions';
+import * as AuthSelectors from '../../../store/auth/selectors/auth.selectors';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {

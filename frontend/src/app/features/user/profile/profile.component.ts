@@ -5,7 +5,7 @@ import { AuthService } from '../../../core/services/auth/auth.service';
 import { User } from '../../../shared/interfaces/user';
 import { Store} from '@ngrx/store';
 import {selectAuthError, selectAuthLoading, selectUpdateSuccess, selectUser} from '../../../store';
-import * as AuthActions from '../../../store/auth/auth.actions';
+import * as AuthActions from '../../../store/auth/actions/auth.actions';
 import {Subject, takeUntil} from 'rxjs';
 
 @Component({

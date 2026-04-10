@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { User } from '../../shared/interfaces/user';
+import { User } from '../../../shared/interfaces/user';
 
 // Login
 export const login = createAction(
@@ -8,7 +8,7 @@ export const login = createAction(
 );
 export const loginSuccess = createAction(
   '[Auth] Login Success',
-  props<{ token: string; user: User }>()
+  props<{ token: string; user: User | null }>()
 );
 export const loginFailure = createAction(
   '[Auth] Login Failure',
@@ -22,7 +22,7 @@ export const register = createAction(
 );
 export const registerSuccess = createAction(
   '[Auth] Register Success',
-  props<{ token: string; user: User }>());
+  props<{ token: string; user: User | null}>());
 export const registerFailure = createAction(
   '[Auth] Register Failure',
   props<{ error: string }>());

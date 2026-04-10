@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { AuthService } from './auth.service';
-import * as AuthActions from '../../../store/auth/auth.actions';
+import * as AuthActions from '../../../store/auth/actions/auth.actions';
 
 describe('AuthService', () => {
   let service: AuthService;

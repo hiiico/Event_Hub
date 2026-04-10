@@ -3,8 +3,8 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import {delay, of} from 'rxjs';
 import { catchError, exhaustMap, map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { ApiService } from '../../core/services/api/api-service';
-import * as AuthActions from './auth.actions';
+import { ApiService } from '../../../core/services/api/api-service';
+import * as AuthActions from '../actions/auth.actions';
 
 @Injectable()
 export class AuthEffects {

@@ -1,7 +1,7 @@
 import { User } from '../../shared/interfaces/user';
 
 export interface AuthState {
-  user: User | null;
+  user: User| null;
   token: string | null;
   loading: boolean;
   error: string | null;
