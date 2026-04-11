@@ -53,7 +53,8 @@ What changed:
 
 The same pattern applies to the Login, Register, Logout and Profile flows.
 
-```sequenceDiagram
+```mermaid
+sequenceDiagram
     participant User
     participant Frontend (RegisterComponent)
     participant AuthService (facade)
