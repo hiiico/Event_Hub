@@ -79,7 +79,7 @@ ng test
 
 - RouterLink components are tested with `RouterTestingModule` to avoid missing ActivatedRoute providers.
 
-#### Example (`LoginComponent` calling `AuthService)
+#### Example (`LoginComponent` calling `AuthService`)
 
 ```mermaid
 sequenceDiagram

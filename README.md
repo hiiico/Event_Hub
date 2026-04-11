@@ -74,7 +74,8 @@ The project also includes an end‑to‑end test script that starts a disposable
 
 Login E2E Test – Sequence Diagram
 
-```sequenceDiagram
+```mermaid
+sequenceDiagram
     participant User as Cypress Test
     participant Frontend as Angular App (port 4200)
     participant Backend as Spring Boot (port 3000)
