@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { Event } from '../../../shared/interfaces/event';
 import { Comment } from '../../../shared/interfaces/comment';
 import { User } from '../../../shared/interfaces/user';
-import { environment } from "../../../../environments/environment.prod";
+import { environment } from "../../../../environments/environment";
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
