@@ -1,4 +1,14 @@
 services:
+  mongodb:
+    image: mongo:7
+    container_name: eventhub-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - eventhub-network
+
   backend:
     build:
       context: .
@@ -6,11 +16,29 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - SPRING_DATA_MONGODB_URI=mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@angular-workshop-cluste.d1dldux.mongodb.net/?appName=Angular-workshop-cluster
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/eventhub
       - JWT_SECRET=${JWT_SECRET}
+    depends_on:
+      - mongodb
+    networks:
+      - eventhub-network
+
   frontend:
     build:
       context: .
       dockerfile: frontend/Dockerfile
+      args:
+        - API_URL=http://localhost:3000/api   # ← use host's localhost (port mapped)
     ports:
       - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - eventhub-network
+
+networks:
+  eventhub-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:

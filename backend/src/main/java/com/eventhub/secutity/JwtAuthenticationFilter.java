@@ -31,7 +31,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        System.out.println("Request URI: " + request.getRequestURI());
+        String path = request.getRequestURI();
+        if (path.startsWith("/api/auth/") || path.equals("/") || path.equals("/robots933456.txt")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         final String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
