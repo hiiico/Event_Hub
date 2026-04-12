@@ -74,8 +74,8 @@ jobs:
               --account-name ${{ env.AZURE_STORAGE_ACCOUNT }} \
               --account-key "${{ secrets.AZURE_STORAGE_KEY }}" \
               --source "$BUILD_PATH" \
-              --destination "${{ env.AZURE_STORAGE_CONTAINER }}" \
-              --overwrite
+              --destination '$web' \
+              --overwritee
 
       - name: Verify Frontend Deployment
         run: |
