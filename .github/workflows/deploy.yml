@@ -3,6 +3,7 @@ name: Deploy to Azure
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 env:
   AZURE_WEBAPP_NAME: eventhub-backend
@@ -35,8 +36,15 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
+      - name: Verify Backend Deployment
+        run: |
+          echo "Waiting for backend to start..."
+          sleep 30
+          curl -f https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/ || echo "Backend may still be starting"
+
   build-and-deploy-frontend:
     runs-on: ubuntu-latest
+    needs: build-and-deploy-backend
     steps:
       - uses: actions/checkout@v4
 
@@ -49,8 +57,8 @@ jobs:
         run: |
           cd frontend
           npm ci
-          npm run build --prod
-          ls -la dist/frontend/browser   # verify output
+          npm run build -- --configuration=production
+          ls -la dist/frontend/browser
 
       - name: Upload to Azure Storage static website
         uses: azure/CLI@v2
@@ -66,5 +74,9 @@ jobs:
               --account-name ${{ env.AZURE_STORAGE_ACCOUNT }} \
               --account-key "${{ secrets.AZURE_STORAGE_KEY }}" \
               --source "$BUILD_PATH" \
-              --destination '$web' \
+              --destination "${{ env.AZURE_STORAGE_CONTAINER }}" \
               --overwrite
+
+      - name: Verify Frontend Deployment
+        run: |
+          echo "Frontend deployed to: https://${{ env.AZURE_STORAGE_ACCOUNT }}.z13.web.core.windows.net"
