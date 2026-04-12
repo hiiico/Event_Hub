@@ -9,7 +9,6 @@ env:
   AZURE_WEBAPP_PACKAGE_PATH: backend/target/*.jar
   JAVA_VERSION: '17'
   AZURE_STORAGE_ACCOUNT: eventhubfrontend
-  AZURE_STORAGE_CONTAINER: $web
 
 jobs:
   build-and-deploy-backend:
@@ -49,8 +48,8 @@ jobs:
         run: |
           cd frontend
           npm ci
-          npm run build --prod
-          ls -la dist/frontend/browser   # verify output
+          npm run build -- --configuration=production
+          ls -la dist/frontend/browser
 
       - name: Upload to Azure Storage static website
         uses: azure/CLI@v2
