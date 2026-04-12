@@ -75,7 +75,7 @@ jobs:
               --account-key "${{ secrets.AZURE_STORAGE_KEY }}" \
               --source "$BUILD_PATH" \
               --destination '$web' \
-              --overwritee
+              --overwrite
 
       - name: Verify Frontend Deployment
         run: |
