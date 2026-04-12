@@ -79,39 +79,41 @@ ng test
 
 - RouterLink components are tested with `RouterTestingModule` to avoid missing ActivatedRoute providers.
 
-### Writing tests
-- Place test files next to the code they test, using the `.spec.ts` suffix.
+#### Example (`LoginComponent` calling `AuthService`)
 
-- Use `TestBed.configureTestingModule` to set up component testing modules.
+```mermaid
+sequenceDiagram
+    participant Test as Test (spec.ts)
+    participant Component as Component (e.g., LoginComponent)
+    participant MockService as Mocked AuthService
+    participant Router as Mocked Router
 
-- Mock dependencies with `jasmine.createSpyObj` to isolate the unit under test.
+    Test->>Test: Configure TestBed with mocked providers
+    Test->>Component: Create component (fixture)
+    Component->>MockService: Inject mock (spy)
+    Test->>Component: Simulate user input (type email/password)
+    Test->>Component: Trigger onSubmit()
+    Component->>MockService: login(email, password)
+    MockService-->>Component: Return fake observable (of(token))
+    Component->>Component: Set loading = true, error = null
+    Component->>Router: navigate(['/events'])
+    Router-->>Component: (no real navigation)
+    Component->>Component: Update UI (async)
+    Test->>Test: Assert expectations (e.g., loading false, called login)
+    Test-->>Test: Test passes/fails
 
-#### Example component test
-
-```plantuml
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MyComponent } from './my.component';
-import { RouterTestingModule } from '@angular/router/testing';
-
-describe('MyComponent', () => {
-  let component: MyComponent;
-  let fixture: ComponentFixture<MyComponent>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [MyComponent, RouterTestingModule]
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(MyComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+    Note over Test,Component: All API calls are mocked – no backend required
+    Note over Test,Router: RouterTestingModule prevents missing ActivatedRoute errors
+    Note over Test,Component: Zone.js handles async operations (fakeAsync/tick)
 ```
+
+- The test sets up the TestBed with mocked providers (e.g., AuthService, Router).
+- The component is created and injected with the mocks.
+- The test simulates user actions (filling a form, clicking a button) and triggers the component’s method.
+- The component calls the mocked service (which returns a fake observable – no real HTTP request).
+- The component then navigates (via mocked Router) and updates its internal state.
+- The test verifies expectations (e.g., that login was called, that loading flags changed, etc.).
+- Zone.js ensures that asynchronous operations (observables, promises) are handled correctly.
 
 #### For more details, see the [Angular testing guide](https://angular.dev/guide/testing).
 

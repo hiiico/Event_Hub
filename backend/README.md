@@ -75,23 +75,84 @@ The project includes an automated test script that sets up a clean MongoDB conta
 ./run-tests.sh
 ```
 
-This script does the following automatically:
+```mermaid
+sequenceDiagram
+    participant User as Developer
+    participant Script as run-tests.sh
+    participant Docker as Docker Daemon
+    participant Container as MongoDB Container
+    participant Maven as Maven (mvn test)
 
-✅ Installs Docker (if missing – works on Ubuntu/Debian)
+    User->>Script: Execute ./run-tests.sh
+    Script->>Script: Check Docker installation
+    alt Docker missing
+        Script->>Script: Install Docker (Ubuntu/Debian)
+    end
+    Script->>Docker: Start Docker daemon (if not running)
+    Docker-->>Script: Daemon ready
+    Script->>Container: Create / start container (mongodb-local)
+    Container-->>Script: Container running
+    Script->>Container: Wait for MongoDB to become ready
+    Container-->>Script: Ready (ping successful)
+    Script->>Maven: Execute mvn clean test
+    Maven->>Container: Run tests (unit, integration, repository)
+    Container-->>Maven: Test results
+    Maven-->>Script: Build success/failure
+    Script->>Container: Stop and remove container
+    Container-->>Script: Cleanup done
+    Script-->>User: Exit with test result
+```
+#### What the diagram shows:
 
-✅ Starts the Docker daemon (if not already running)
-
-✅ Creates and starts a MongoDB container named mongodb-local (or reuses an existing one)
-
-✅ Waits for MongoDB to become ready
-
-✅ Executes mvn clean test
-
-✅ Stops the MongoDB container after the tests finish
-
-All tests (unit, integration, and repository) run against a real MongoDB instance, ensuring maximum reliability.
+- The script handles Docker installation, daemon startup, and container lifecycle.
+- The MongoDB container is reused if already exists (optional, but the script may check).
+- All tests run against the real database inside the container.
+- After tests finish, the container is stopped and removed – no leftover state.
+- All tests (unit, integration, and repository) run against a real MongoDB instance, ensuring maximum reliability.
 
 > Note: The script assumes a Linux environment (Ubuntu/Debian) for Docker installation. For macOS or Windows, please install Docker Desktop manually and then run the script – it will still manage the container lifecycle.
+
+#### Unit Test Example – `EventService.getAllEvents` (with Mockito)
+
+```mermaid
+sequenceDiagram
+    participant Test as EventServiceTest
+    participant Service as EventService
+    participant MockRepo as Mock(EventRepository)
+    participant MockUserRepo as Mock(UserRepository)
+
+    Test->>Service: getAllEvents(PageRequest)
+    Service->>MockRepo: findAll(PageRequest)
+    MockRepo-->>Service: return Page<Event>
+    Service-->>Test: return Page<EventResponse>
+    Test->>Test: assertThat(content).hasSize(1)
+```
+
+#### Integration Test Example – `AuthService` (with real MongoDB `inside the disposable container`)
+
+```mermaid
+sequenceDiagram
+    participant Test as AuthServiceTest
+    participant Service as AuthService
+    participant Repo as UserRepository
+    participant MongoDB as MongoDB Container
+    participant Script as ./run-tests.sh
+
+    Script->>MongoDB: Start container (mongodb-local)
+    Script->>MongoDB: Wait for ready
+    Test->>Service: register(RegisterRequest)
+    Service->>Repo: existsByEmail(email)
+    Repo->>MongoDB: Query user by email
+    MongoDB-->>Repo: false (user not found)
+    Repo-->>Service: false
+    Service->>Repo: save(user)
+    Repo->>MongoDB: Insert new user document
+    MongoDB-->>Repo: success
+    Repo-->>Service: saved user
+    Service-->>Test: return JWT token
+    Test->>Test: assertThat(token).isNotNull()
+    Script->>MongoDB: Stop & remove container
+```
 
 ### e2e Tests (Cypress)
 
@@ -102,7 +163,7 @@ cd ../   # go to project root
 ./run-e2e-tests.sh
 ```
 
-This script automatically starts a disposable MongoDB container, builds and runs the backend, serves the frontend, executes all Cypress tests, and cleans up afterwards.
+This script automatically starts a disposable MongoDB container, builds and runs the backend, serves the frontend, executes all Cypress tests, and cleans up afterward.
 
 If you prefer to run Cypress tests against an already running backend (e.g., your development backend), you can execute the tests directly:
 

@@ -42,27 +42,53 @@ D --> E[Phase 5: Azure Deployment<br/>Terraform, GitHub Actions, App Service + S
 
 ## Sequence Diagrams
 
-### User Registration
+### User Registration (with NgRx)
+
+What changed:
+
+- `AuthService` now dispatches an action instead of calling the API directly.
+- NgRx Effects handle the API call, success/failure actions, and the subsequent `loadUser` call.
+- Store manages the state (user, token) and notifies the component via selectors.
+- The final navigation is triggered by the component reacting to the `user$` observable (or a success action).
+
+The same pattern applies to the Login, Register, Logout and Profile flows.
 
 ```mermaid
 sequenceDiagram
     participant User
-    participant Frontend
-    participant AuthService
+    participant Frontend (RegisterComponent)
+    participant AuthService (facade)
+    participant Store
+    participant AuthEffects
+    participant ApiService
     participant Backend as Backend (POST /api/auth/register)
     participant MongoDB
 
     User->>Frontend: Submit registration form
     Frontend->>AuthService: register(name, email, password)
-    AuthService->>Backend: POST /api/auth/register
+    AuthService->>Store: dispatch(register action)
+    Store->>AuthEffects: register action
+    AuthEffects->>ApiService: POST /api/auth/register
+    ApiService->>Backend: HTTP request
     Backend->>MongoDB: Save user
     MongoDB-->>Backend: User saved
-    Backend-->>AuthService: Return JWT token
-    AuthService-->>Frontend: Store token & user
-    Frontend->>Frontend: Navigate to /events
+    Backend-->>ApiService: JWT token
+    ApiService-->>AuthEffects: token
+    AuthEffects->>Store: dispatch(registerSuccess)
+    AuthEffects->>Store: dispatch(loadUser)
+    Store->>AuthEffects: loadUser action
+    AuthEffects->>ApiService: GET /users/me
+    ApiService->>Backend: HTTP request (with token)
+    Backend-->>ApiService: user object
+    ApiService-->>AuthEffects: user
+    AuthEffects->>Store: dispatch(loadUserSuccess)
+    Store->>Store: reducer updates user, token
+    Store-->>AuthService: user$ emits
+    AuthService-->>Frontend: user observable
+    Frontend->>User: redirect to /events
 ```
 
-### Create Event
+### Create Event (without NgRx)
 
 ```mermaid
 sequenceDiagram
@@ -83,7 +109,7 @@ sequenceDiagram
     EventFormComponent->>Frontend: Navigate to event details
 ```
 
-### RSVP to Event
+### RSVP to Event (without NgRx)
 
 ```mermaid
 sequenceDiagram
@@ -103,7 +129,7 @@ sequenceDiagram
     EventDetailsComponent->>EventDetailsComponent: Update attendees list & button state
 ```
 
-### Geolocation “Near you”
+### Geolocation “Near you” (without NgRx)
 
 ```mermaid
 sequenceDiagram
@@ -177,9 +203,61 @@ After deployment:
 - Frontend: [https://eventhubfrontend.z28.web.core.windows.net](https://eventhubfrontend.z28.web.core.windows.net)
 ---
 
-## Future Improvements (Bonuses)
+## Completed Improvements
 
-- Add NgRx for state management
+### ✅ NgRx State Management for Authentication
+
+The authentication module now uses NgRx for predictable state management, side effect handling, and better scalability.
+
+- **State**: user, token, loading, error, updateSuccess
+- **Actions**: login, register, logout, updateUser, loadUser, clearError
+- **Effects**: handle API calls, token storage, navigation, auto‑clear success message
+- **Selectors**: user$, isAuthenticated$, loading$, error$, updateSuccess$
+- **Facade**: `AuthService` wraps the store, keeping components decoupled
+
+#### Sequence Diagram – NgRx Authentication Flow (Login)
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant LoginComponent
+    participant AuthService (facade)
+    participant Store
+    participant AuthEffects
+    participant ApiService
+    participant Backend
+    participant LocalStorage
+
+    User->>LoginComponent: Enter credentials & submit
+    LoginComponent->>AuthService: login(email, password)
+    AuthService->>Store: dispatch(login action)
+    Store->>AuthEffects: login action intercepted
+    AuthEffects->>ApiService: POST /auth/login
+    ApiService->>Backend: HTTP request
+    Backend-->>ApiService: JWT token
+    ApiService-->>AuthEffects: token
+    AuthEffects->>Store: dispatch(loginSuccess)
+    AuthEffects->>Store: dispatch(loadUser)
+    Store->>AuthEffects: loadUser action
+    AuthEffects->>ApiService: GET /users/me
+    ApiService->>Backend: HTTP request (with token)
+    Backend-->>ApiService: user object
+    ApiService-->>AuthEffects: user
+    AuthEffects->>Store: dispatch(loadUserSuccess)
+    Store->>LocalStorage: persist token & user
+    Store-->>AuthService: user$ emits
+    AuthService-->>LoginComponent: user observable
+    LoginComponent->>User: redirect to /events
+```
+
+The same pattern applies to `register`, `logout`, and `updateUser`. All components (`Header`, `Profile`, `Login`, `Register`) have been refactored to use the NgRx‑backed `AuthService` facade.
+
+---
+## Future Improvements (Bonuses)
+- ~~Add NgRx for state management~~ (✅ Completed for authentication)
+- Extend NgRx to Events, RSVP, and Geolocation modules
+- Add unit test coverage for NgRx effects and reducers
 - Implement Google Drive API for event flyers
 - Use Azure Front Door for global load balancing
-- ---
+
+---
