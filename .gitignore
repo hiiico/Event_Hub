@@ -61,6 +61,7 @@ logs/
 
 # Environment files (root level)
 *.env
+.env.local
 
 # Terraform secrets
 terraform/terraform.tfvars

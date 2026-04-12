@@ -35,7 +35,7 @@ build/
 # Environment variables (if stored locally)
 ../.env
 *.env
-
+.env.local
 # Terraform secrets
 terraform/terraform.tfvars
 

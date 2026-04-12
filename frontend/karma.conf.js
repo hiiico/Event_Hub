@@ -9,7 +9,7 @@ module.exports = function(config) {
       require('karma-jasmine-html-reporter')
     ],
     files: [
-      'src/test-setup.ts',                     // ← global setup (imports zone.js)
+      'src/test-setup.ts',                     // global setup (imports zone.js)
       { pattern: 'src/**/*.spec.ts', watched: false }
     ],
     preprocessors: {
@@ -25,9 +25,21 @@ module.exports = function(config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['Chrome'],
-    singleRun: false,
-    restartOnFileChange: true,
+    // Use ChromeHeadless for CI, Chrome for local development
+    browsers: process.env.CI ? ['ChromeHeadless'] : ['Chrome'],
+    customLaunchers: {
+      ChromeHeadless: {
+        base: 'Chrome',
+        flags: [
+          '--headless',
+          '--disable-gpu',
+          '--no-sandbox',
+          '--remote-debugging-port=9222'
+        ]
+      }
+    },
+    singleRun: !!process.env.CI,
+    restartOnFileChange: !process.env.CI,
     browserNoActivityTimeout: 60000,
     captureTimeout: 120000
   });
