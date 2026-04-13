@@ -52,6 +52,7 @@ export JWT_SECRET=mySecretKeyForJWTGenerationShouldBeLongEnough12345
 Then run
 
 ```bash
+cd backend
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 The API will be available at [http://localhost:3000](http://localhost:3000).
@@ -83,6 +84,7 @@ The backend is already running on Azure, and the frontend is hosted as a static 
 ### 2. Fork the repo and run locally (full development mode)
 
 ```bash
+cd ../
 ./local-dev.sh
 ```
 
@@ -159,24 +161,42 @@ docker-compose down -v
 
 - [Frontend](frontend/README.md#running-tests)
 
-### Running E2E Tests (Full Stack)
+## Running E2E Tests (Full Stack)
 
-The project also includes an end‑to‑end test script that starts a disposable MongoDB container, builds and runs the backend, serves the frontend, executes all Cypress tests, and cleans up everything afterward.
+The project provides two ways to run Cypress end‑to‑end tests:
+
+1. **Fully automated script** – starts a disposable environment, runs all tests, cleans up.
+2. **Manual run** – uses your already‑running local backend/frontend (good for debugging).
+
+---
+
+### Option 1: Automated (recommended for CI and clean runs)
 
 ```bash
 ./run-e2e-tests.sh
 ```
 
-#### What the script does automatically:
+This script does everything for you:
 
 - 🐳 Installs Docker (if missing – works on Ubuntu/Debian)
+
 - 🔄 Starts the Docker daemon (if not already running)
-- 🗄️ Creates a fresh MongoDB container named mongodb-e2e (replica set enabled)
-- 🔧 Builds the backend (mvn clean package -DskipTests) and starts it on port 3000 with the e2e profile
-- 🌐 Starts the Angular frontend (ng serve) on port 4200
+
+- 🗄️ Creates a fresh MongoDB container named `mongodb-e2e` (replica set enabled)
+
+- 🔧 Builds the backend (`mvn clean package -DskipTests`) and starts it on port 3000 with the e2e profile
+
+- 🌐 Starts the Angular frontend (`ng serve`) on port 4200
+
 - ⏳ Waits for both services to become responsive
-- 🧪 Runs all Cypress E2E tests from frontend/cypress/e2e/
+
+- 🧪 Runs all Cypress E2E tests from `frontend/cypress/e2e/`
+
 - 🧹 Stops the backend, frontend, and removes the MongoDB container (no leftovers)
+
+All tests run against a real MongoDB instance inside a disposable container – no leftover data.
+
+> Platform note: The script installs Docker automatically on Ubuntu/Debian. On macOS or Windows, install Docker Desktop manually; the script will still manage the container lifecycle.
 
 Login E2E Test – Sequence Diagram
 
@@ -205,21 +225,27 @@ sequenceDiagram
     User->>Frontend: cy.get('.event-card').should('have.length.at.least', 1)
 ```
 
-All E2E tests run against a real MongoDB instance and a fully functional backend + frontend, ensuring maximum reliability.
+---
 
-> Note: The script assumes a Linux environment (Ubuntu/Debian) for Docker installation. On macOS or Windows, install Docker Desktop manually; the script will still manage the container lifecycle.
-The backend is expected to run on port 3000 and the frontend on port 4200. Adjust the script if your setup uses different ports.
+### Option 2: Manual run against your local development stack
 
-If you prefer to run Cypress tests against an already running backend (e.g., your development backend), you can execute the tests directly:
+If you already have the backend and frontend running locally (e.g., via `local-dev.sh` or manual commands), you can run Cypress directly without the disposable script.
+
+Prerequisites:
+
+- Backend running on `http://localhost:3000` (e.g., `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev`)
+
+Frontend running on `http://localhost:4200` (e.g., ng serve)
+
+The frontend’s `environment.ts` must point to the backend URL (`http://localhost:3000/api` – default for `ng serve`)
+
+Run Cypress:
 
 ```bash
-ng serve   # in one terminal
-# In another terminal:
-npx cypress open   # interactive mode
+cd frontend
+npx cypress open      # interactive mode (Cypress Test Runner)
 # or
-npx cypress run    # headless mode
+npx cypress run       # headless mode (CI style)
 ```
 
-Make sure the backend is running and the environment variables (API URL) are correctly configured (e.g., in `src/environments/environment.ts`).
-
----
+> Note: This manual mode uses your existing development database. For a completely isolated, repeatable test run, use Option 1 instead.
