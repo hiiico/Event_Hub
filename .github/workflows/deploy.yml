@@ -30,27 +30,20 @@ jobs:
         with:
           node-version: '20'
 
-      # Make test scripts executable
       - name: Make test scripts executable
         run: |
-          chmod +x run-tests.sh run-e2e-tests.sh
+          chmod +x backend/run-tests.sh
+          chmod +x run-e2e-tests.sh
 
-      # ---------- Backend unit / integration tests ----------
       - name: Run backend tests
-        run: ./run-tests.sh
+        run: ./backend/run-tests.sh
 
-      # ---------- Frontend unit tests (Karma/Jasmine) ----------
-      - name: Install frontend dependencies
+      - name: Run frontend unit tests
         run: |
           cd frontend
           npm ci
-
-      - name: Run frontend unit tests (headless)
-        run: |
-          cd frontend
           npm test -- --watch=false --browsers=ChromeHeadless
 
-      # ---------- E2E tests (Cypress) ----------
       - name: Run E2E tests
         run: ./run-e2e-tests.sh
 
