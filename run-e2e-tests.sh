@@ -6,20 +6,8 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-# ----------------------------------------------------------------------
-# Helper: Find a free port on the host
-# ----------------------------------------------------------------------
-find_free_port() {
-    local port
-    while : ; do
-        port=$(( ( RANDOM % 30000 ) + 10000 ))
-        (echo >/dev/tcp/localhost/$port) &>/dev/null || break
-    done
-    echo "$port"
-}
-
 CONTAINER_NAME="mongodb-e2e"
-MONGO_PORT=$(find_free_port)
+MONGO_PORT=$(python3 -c 'import socket; s=socket.socket(); s.bind(("",0)); print(s.getsockname()[1]); s.close()' 2>/dev/null || echo "27019")
 BACKEND_PID=""
 FRONTEND_PID=""
 
@@ -32,9 +20,17 @@ cleanup() {
 trap cleanup EXIT
 
 # ----------------------------------------------------------------------
-# 1. Create a fresh MongoDB container on a free port
+# 1. Ensure ports are free
 # ----------------------------------------------------------------------
-echo -e "${YELLOW}🚀 Preparing MongoDB container for E2E tests on port ${MONGO_PORT}...${NC}"
+echo -e "${YELLOW}🧹 Ensuring ports 3000 and 4200 are free...${NC}"
+sudo fuser -k 3000/tcp 2>/dev/null || true
+sudo fuser -k 4200/tcp 2>/dev/null || true
+sleep 2
+
+# ----------------------------------------------------------------------
+# 2. MongoDB container
+# ----------------------------------------------------------------------
+echo -e "${YELLOW}🚀 Preparing MongoDB container on port ${MONGO_PORT}...${NC}"
 docker rm -f "${CONTAINER_NAME}" 2>/dev/null || true
 docker run -d --name "${CONTAINER_NAME}" -p ${MONGO_PORT}:27017 mongo:7 --replSet rs0 --bind_ip_all
 echo -e "${GREEN}✅ Container started.${NC}"
@@ -47,7 +43,7 @@ docker exec "${CONTAINER_NAME}" mongosh --eval "rs.initiate()" &>/dev/null || tr
 echo -e "${GREEN}✅ MongoDB ready.${NC}"
 
 # ----------------------------------------------------------------------
-# 2. Build and run backend (using the dynamic port)
+# 3. Build and run backend
 # ----------------------------------------------------------------------
 echo -e "${YELLOW}🔧 Building backend...${NC}"
 cd backend
@@ -67,31 +63,43 @@ for i in {1..30}; do
         echo -e "${GREEN}✅ Backend ready.${NC}"
         break
     fi
-    sleep 1
+    if [ $i -eq 30 ]; then
+        echo -e "${RED}❌ Backend failed to start.${NC}"
+        exit 1
+    fi
+    sleep 2
 done
 
 # ----------------------------------------------------------------------
-# 3. Start frontend
+# 4. Start frontend (with nohup and log redirection)
 # ----------------------------------------------------------------------
-echo -e "${YELLOW}🚀 Starting frontend...${NC}"
+echo -e "${YELLOW}🚀 Starting frontend on port 4200...${NC}"
 cd frontend
 npm install
-ng serve --port 4200 --open=false &
+# Kill any existing ng serve process
+pkill -f "ng serve" || true
+# Start frontend in background with nohup
+nohup ng serve --port 4200 --host 0.0.0.0 --open=false > frontend.log 2>&1 &
 FRONTEND_PID=$!
 cd ..
 
-echo -e "${YELLOW}⏳ Waiting for frontend (port 4200)...${NC}"
-# shellcheck disable=SC2034
+# Wait for frontend to be ready (curl with retry)
+echo -e "${YELLOW}⏳ Waiting for frontend (port 4200) to respond...${NC}"
 for i in {1..30}; do
     if curl -s -f http://localhost:4200 > /dev/null 2>&1; then
         echo -e "${GREEN}✅ Frontend ready.${NC}"
         break
     fi
-    sleep 1
+    if [ $i -eq 30 ]; then
+        echo -e "${RED}❌ Frontend failed to start. Check frontend.log:${NC}"
+        cat frontend.log 2>/dev/null || echo "No log file"
+        exit 1
+    fi
+    sleep 2
 done
 
 # ----------------------------------------------------------------------
-# 4. Seed test user and sample event
+# 5. Seed test user and sample event
 # ----------------------------------------------------------------------
 echo -e "${YELLOW}👤 Seeding test user...${NC}"
 TOKEN=$(curl -s -X POST http://localhost:3000/api/auth/register \
@@ -101,6 +109,10 @@ if [ -z "$TOKEN" ]; then
     TOKEN=$(curl -s -X POST http://localhost:3000/api/auth/login \
         -H "Content-Type: application/json" \
         -d '{"email":"test@example.com","password":"password123"}' | tr -d '"')
+fi
+if [ -z "$TOKEN" ]; then
+    echo -e "${RED}❌ Failed to obtain token.${NC}"
+    exit 1
 fi
 echo -e "${GREEN}✅ Token obtained.${NC}"
 
@@ -113,16 +125,16 @@ curl -s -X POST http://localhost:3000/api/events \
 echo -e "${GREEN}✅ Sample event created.${NC}"
 
 # ----------------------------------------------------------------------
-# 5. Run Cypress tests
+# 6. Run Cypress tests (headless)
 # ----------------------------------------------------------------------
 echo -e "${YELLOW}🧪 Running Cypress E2E tests...${NC}"
 cd frontend
-npx cypress run
+npx cypress run --config baseUrl=http://localhost:4200
 CYPRESS_EXIT_CODE=$?
 cd ..
 
 # ----------------------------------------------------------------------
-# 6. Cleanup will run via trap
+# 7. Cleanup via trap
 # ----------------------------------------------------------------------
 if [ ${CYPRESS_EXIT_CODE} -eq 0 ]; then
     echo -e "${GREEN}✅ All E2E tests passed!${NC}"
