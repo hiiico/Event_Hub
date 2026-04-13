@@ -249,3 +249,21 @@ npx cypress run       # headless mode (CI style)
 ```
 
 > Note: This manual mode uses your existing development database. For a completely isolated, repeatable test run, use Option 1 instead.
+
+---
+
+## CI/CD Pipeline
+
+The project uses **GitHub Actions** for continuous integration and deployment. On every push to the `main` branch:
+
+1. **Backend unit/integration tests** – runs `./backend/run-tests.sh` (spins up a disposable MongoDB container, executes Maven tests, cleans up).
+2. **Frontend unit tests** – runs `ng test` in headless Chrome.
+3. **End‑to‑end (Cypress) tests** – runs `./run-e2e-tests.sh` (full isolated stack: MongoDB container, backend JAR, frontend `ng serve`, seeds test data, runs all specs, then destroys everything).
+4. **Deployment** – if all tests pass:
+    - Backend JAR is deployed to Azure App Service.
+    - Frontend build is uploaded to Azure Storage static website.
+
+All test containers and processes are automatically cleaned up, even on failure.  
+See the workflow file: [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)
+
+---
