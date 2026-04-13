@@ -165,7 +165,13 @@ cd ../   # go to project root
 
 This script automatically starts a disposable MongoDB container, builds and runs the backend, serves the frontend, executes all Cypress tests, and cleans up afterward.
 
-If you prefer to run Cypress tests against an already running backend (e.g., your development backend), you can execute the tests directly:
+If you already have the backend and frontend running locally (e.g., via `local-dev.sh` or manual commands), you can execute Cypress tests directly
+
+#### Prerequisites
+- Backend must be running on `http://localhost:3000` (e.g., with `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev`)
+- Frontend must be running on `http://localhost:4200` (e.g., with `ng serve`)
+- MongoDB must be accessible (local container or Atlas)
+- The frontend’s `environment.ts` must point to the backend URL (`http://localhost:3000/api` – this is the default for `ng serve`)
 
 ```bash
 ng serve   # in one terminal
@@ -175,7 +181,7 @@ npx cypress open   # interactive mode
 npx cypress run    # headless mode
 ```
 
-Make sure the backend is running and the environment variables (API URL) are correctly configured (e.g., in `src/environments/environment.ts`).
+> Note: This approach uses your existing local data (the same database you use for development). For fully isolated, disposable test runs (recommended for CI or clean slate), use `./run-e2e-tests.sh` instead.
 
 ---
 
