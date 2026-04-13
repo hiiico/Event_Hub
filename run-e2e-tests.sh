@@ -71,15 +71,17 @@ for i in {1..30}; do
 done
 
 # ----------------------------------------------------------------------
-# 4. Start frontend (with nohup and log redirection)
+# 4. Start frontend (with output logging)
 # ----------------------------------------------------------------------
 echo -e "${YELLOW}🚀 Starting frontend on port 4200...${NC}"
 cd frontend
 npm install
+
 # Kill any existing ng serve process
 pkill -f "ng serve" || true
-# Start frontend in background with nohup
-nohup ng serve --port 4200 --host 0.0.0.0 --open=false > frontend.log 2>&1 &
+
+# Start frontend using npx (ensures local Angular CLI is used)
+npx ng serve --port 4200 --host 0.0.0.0 --open=false > frontend.log 2>&1 &
 FRONTEND_PID=$!
 cd ..
 
@@ -90,9 +92,15 @@ for i in {1..30}; do
         echo -e "${GREEN}✅ Frontend ready.${NC}"
         break
     fi
+    # Check if process is still running
+    if ! kill -0 $FRONTEND_PID 2>/dev/null; then
+        echo -e "${RED}❌ Frontend process died. Showing log:${NC}"
+        cat frontend/frontend.log 2>/dev/null || echo "No log file"
+        exit 1
+    fi
     if [ $i -eq 30 ]; then
-        echo -e "${RED}❌ Frontend failed to start. Check frontend.log:${NC}"
-        cat frontend.log 2>/dev/null || echo "No log file"
+        echo -e "${RED}❌ Frontend failed to start. Log:${NC}"
+        cat frontend/frontend.log 2>/dev/null || echo "No log file"
         exit 1
     fi
     sleep 2
