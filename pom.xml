@@ -29,7 +29,6 @@
 
     <modules>
         <module>backend</module>
-        <module>frontend</module>
     </modules>
 
     <!-- No build plugins here – they belong in child modules -->
