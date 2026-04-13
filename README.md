@@ -24,26 +24,132 @@
 
 ---
 
-## Quick Start
+## Getting Started
+
+### Quick Start commands
+
+#### MongoDB instance running locally:
+
+```bash
+docker run -d -p 27017:27017 --name mongodb-local mongo:7
+```
+
+#### Backend:
+
+> Option A: Create `backend/src/main/resources/application-dev.properties`
+```properties
+spring.data.mongodb.uri=mongodb://localhost:27017/eventhub_dev
+jwt.secret=mySecretKeyForJWTGenerationShouldBeLongEnough12345
+```
+
+>Option B: Use environment variables
+
+```bash
+export SPRING_DATA_MONGODB_URI=mongodb://localhost:27017/eventhub_dev
+export JWT_SECRET=mySecretKeyForJWTGenerationShouldBeLongEnough12345
+```
+
+Then run
+
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+```
+The API will be available at [http://localhost:3000](http://localhost:3000).
 
 - Backend detailed setup in [backend/README.md](backend/README.md#running-locally).
-- Frontend detailed setup in [frontend/README.md](frontend/README.md#running-locally).
 
-#### The backend is already deployed on Azure, test it at [https://eventhub-backend.azurewebsites.net](https://eventhub-backend.azurewebsites.net). You can run the frontend locally, and it will connect to this live backend.
+#### Frontend:
 
-Quick command:
 ```bash
 cd frontend
 npm install
 npm start
 ```
+The API will be available at [http://localhost:4200](http://localhost:4200).
 
-#### Optional – Run backend locally (if you prefer to run your own backend instance):
+- Frontend detailed setup in [frontend/README.md](frontend/README.md#running-locally).
 
-> Note: The frontend uses the Azure backend URL by default (see [frontend/src/environments/environment.prod.ts](frontend/src/environments/environment.prod.ts)).
-For local development with a local backend, change `environment.prod.ts` to point to `http://localhost:3000/api`.
+---
 
-Open [http://localhost:4200](http://localhost:4200)
+### 1. Try the deployed app (no setup required)
+
+The backend is already running on Azure, and the frontend is hosted as a static website.  
+👉 [**EventHub Live Demo**](https://eventhubfrontend.z28.web.core.windows.net)
+
+> You can browse events, but to create events or RSVP you need to register an account – it’s completely free.
+
+---
+
+### 2. Fork the repo and run locally (full development mode)
+
+```bash
+./local-dev.sh
+```
+
+The script will:
+
+- Create a persistent MongoDB container (data survives restarts)
+
+- Launch the backend on port 3000 with the dev profile
+
+- Launch the frontend on port 4200 with live reload
+
+- Press `Ctrl+C` to stop – the MongoDB container stops automatically (data is kept for next run).
+
+> Requirements: Docker, Java 17, Maven, Node.js 20, Angular CLI.
+
+---
+
+### 3. Pull pre‑built Docker images and run (no build required)
+
+If you just want to run the application without building anything, use the images from Docker Hub.
+
+```bash
+# Pull the images
+docker pull hiiico/eventhub-backend:latest
+docker pull hiiico/eventhub-frontend:latest
+
+# Run the backend (requires a MongoDB instance – see note below)
+docker run -d -p 3000:3000 --name eventhub-backend hiiico/eventhub-backend:latest
+
+# Run the frontend
+docker run -d -p 4200:80 --name eventhub-frontend hiiico/eventhub-frontend:latest
+```
+
+> Note: The pre‑built backend expects a MongoDB connection string via the environment variable SPRING_DATA_MONGODB_URI. For a quick test, you can start a local MongoDB container: 
+```bash
+docker run -d -p 27017:27017 --name mongodb mongo:7
+docker run -d -p 3000:3000 --name eventhub-backend --link mongodb -e SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/eventhub hiiico/eventhub-backend:latest
+```
+
+---
+
+### 4. Build and run everything with Docker Compose (full local stack)
+
+This option builds the images from source and runs a complete local environment with a MongoDB container, backend, and frontend – all isolated.
+
+```bash
+# Clone the repository
+git clone https://github.com/hiiico/Event_Hub
+cd eventhub
+
+# (Optional) Create a .env file for JWT secret
+echo "JWT_SECRET=mySuperSecretKey" > .env
+
+# Build and start all services
+docker-compose up --build
+
+# Stop and remove containers (including the database volume)
+docker-compose down -v
+```
+
+- Frontend: http://localhost:4200
+
+- Backend API: http://localhost:3000
+
+- MongoDB: internal mongodb://mongodb:27017/eventhub
+
+> The frontend is built with `API_URL=http://localhost:3000/api`, so your browser talks directly to the backend container via the host‑mapped port.
 
 ---
 
