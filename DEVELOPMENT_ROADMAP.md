@@ -151,44 +151,99 @@ sequenceDiagram
 
 ## Running the Full Stack Locally
 
-1. **Backend** (port 3000):  
+### Option A: All‑in‑one script (recommended)
+
+```bash
+./local-dev.sh
+```
+
+This script:
+
+- Creates a persistent MongoDB container (`mongodb-local`) if it doesn’t exist (data survives restarts)
+- Starts the container (if stopped)
+- Launches the backend with `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev` (uses `mongodb://localhost:27017/eventhub_dev`)
+- Launches the frontend with `ng serve`
+- When you press Ctrl+C, it stops the MongoDB container (but keeps the volume, so data is preserved for the next run)
+
+Access the app:
+
+- Frontend: [http://localhost:4200](http://localhost:4200)
+
+- Backend API: [http://localhost:3000](http://localhost:3000)
+
+> Requirements: Docker, Java 17, Maven, Node.js 20, Angular CLI.
+
+### Option B: Manual commands (without the script)
+
+1. Start MongoDB (persistent container):
+
+```bash
+docker run -d --name mongodb-local -p 27017:27017 -v mongodb_data:/data/db mongo:7
+```
+
+2. Backend (port 3000):
+
 ```bash
 cd backend && ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-2. **Frontend** (port 4200):  
+3. Frontend (port 4200):
+
 ```bash
 cd frontend && ng serve
 ```
 
-3. **Open** [http://localhost:4200](http://localhost:4200)
-
-### Running with Docker (from pre‑built images)
-
-If you have the images available on Docker Hub, you can run the entire stack with a single command:
+4. Stop the MongoDB container when done:
 
 ```bash
-docker-compose up -d
+docker stop mongodb-local
 ```
 
-To pull the images first and then run:
+---
+
+## Running with Docker (from pre‑built images or local build)
+
+### Using pre‑built images from Docker Hub
 
 ```bash
+# Pull images
 docker pull hiiico/eventhub-backend:latest
 docker pull hiiico/eventhub-frontend:latest
-docker-compose up -d
+
+# Run backend (requires a MongoDB instance – see note)
+docker run -d -p 3000:3000 --name eventhub-backend hiiico/eventhub-backend:latest
+
+# Run frontend
+docker run -d -p 4200:80 --name eventhub-frontend hiiico/eventhub-frontend:latest
 ```
 
-To run only the backend or frontend separately:
+> Note: The backend needs a MongoDB connection string. For a quick test, start a local MongoDB container:
+```bash
+docker run -d -p 27017:27017 --name mongodb mongo:7
+docker run -d -p 3000:3000 --name eventhub-backend --link mongodb -e SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/eventhub hiiico/eventhub-backend:latest
+```
+
+### Building and running with Docker Compose (local MongoDB)
 
 ```bash
-docker run -p 3000:3000 --env-file .env hiiico/eventhub-backend:latest
-```
-```bash
-docker run -p 4200:80 hiiico/eventhub-frontend:latest
+# Optional: create a .env file for JWT secret
+echo "JWT_SECRET=mySuperSecretKey" > .env
+
+# Build and start all services
+docker-compose up --build
+
+# Stop and remove containers (including volumes)
+docker-compose down -v
 ```
 
-> Note: The backend requires the .env file with MongoDB Atlas credentials. The frontend is a static nginx container serving the Angular app.
+This uses a local MongoDB container (not Atlas), builds the backend and frontend from source, and runs the full stack with internal networking.
+
+- Frontend: [http://localhost:4200](http://localhost:4200)
+
+- Backend: [http://localhost:3000](http://localhost:3000)
+
+- MongoDB: internal `mongodb://mongodb:27017/eventhub`
+
 ---
 
 ## Deployment to Azure
