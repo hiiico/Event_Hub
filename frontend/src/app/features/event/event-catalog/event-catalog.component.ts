@@ -5,7 +5,9 @@ import { EventCardComponent } from '../../../shared/components/event-card/event-
 import { Event } from '../../../shared/interfaces/event';
 import { EventSearchComponent } from '../../../shared/components/event-search/event-search.component';
 import { GeolocationService } from '../../../core/services/geolocation/geolocation.service';
-import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import {Subject, debounceTime, distinctUntilChanged, filter} from 'rxjs';
+import {NavigationEnd, Router} from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-event-catalog',
@@ -34,18 +36,29 @@ export class EventCatalogComponent implements OnInit {
   locationEnabled = false;
 
   private searchSubject = new Subject<string>();
+  private routerSubscription: Subscription;
+  private searchSubscription: Subscription;
 
   constructor(
     private eventService: EventService,
     private geolocationService: GeolocationService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {
-    this.searchSubject.pipe(debounceTime(300), distinctUntilChanged())
-      .subscribe(term => {
-        this.searchTerm = term;
-        this.applyFilters();
-        this.cdr.detectChanges();
-      });
+    this.searchSubscription = this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(term => {
+      this.searchTerm = term;
+      this.applyFilters();
+      this.cdr.detectChanges();
+    });
+
+    this.routerSubscription = this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd && event.url === '/events')
+    ).subscribe(() => {
+      this.loadEvents();
+    });
   }
 
   ngOnInit(): void {
@@ -181,5 +194,9 @@ export class EventCatalogComponent implements OnInit {
     const idx = cats.indexOf(this.categoryFilter);
     this.categoryFilter = cats[(idx + 1) % cats.length];
     this.applyFilters();
+  }
+  ngOnDestroy() {
+    this.routerSubscription?.unsubscribe();
+    this.searchSubscription?.unsubscribe();
   }
 }

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { EventCardComponent } from './event-card.component';
-import { Event } from '../../../shared/interfaces/event';
-import { ShortenLocationPipe } from '../../../shared/pipes/shorten-location.pipe';
+import { Event } from '../../interfaces/event';
+import { ShortenLocationPipe } from '../../pipes/shorten-location.pipe';
 import { RouterTestingModule } from '@angular/router/testing';
 
 describe('EventCardComponent', () => {

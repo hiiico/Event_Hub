@@ -1,6 +1,18 @@
 /// <reference types="cypress" />
+
 describe('Login', () => {
   beforeEach(() => {
+    // Ensure test user exists (ignore 409 Conflict if already present)
+    cy.request({
+      method: 'POST',
+      url: 'http://localhost:3000/api/auth/register',
+      body: {
+        name: 'Test User',
+        email: 'test@example.com',
+        password: 'password123'
+      },
+      failOnStatusCode: false
+    });
     cy.visit('/login');
   });
 

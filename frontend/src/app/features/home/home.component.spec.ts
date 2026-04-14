@@ -4,7 +4,6 @@ import { EventService } from '../../core/services/event/event.service';
 import { AuthService } from '../../core/services/auth/auth.service';
 import { of } from 'rxjs';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Event } from '../../shared/interfaces/event';
 
 describe('HomeComponent', () => {
   let component: HomeComponent;

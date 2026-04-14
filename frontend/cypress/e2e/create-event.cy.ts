@@ -1,6 +1,18 @@
 /// <reference types="cypress" />
+
 describe('Create Event', () => {
   beforeEach(() => {
+    // Register test user if not exists
+    cy.request({
+      method: 'POST',
+      url: 'http://localhost:3000/api/auth/register',
+      body: {
+        name: 'Test User',
+        email: 'test@example.com',
+        password: 'password123'
+      },
+      failOnStatusCode: false
+    });
     cy.visit('/login');
     cy.get('input[name="email"]').type('test@example.com');
     cy.get('input[name="password"]').type('password123');
@@ -8,7 +20,6 @@ describe('Create Event', () => {
 
     cy.url().should('include', '/events');
     cy.get('.event-card', { timeout: 10000 }).should('have.length.at.least', 1);
-
     cy.get('button.btn--accent').contains('Create event').should('exist');
   });
 
@@ -26,7 +37,6 @@ describe('Create Event', () => {
       cy.get('input[name="title"]').type('Cypress Test Event');
       cy.get('textarea[name="description"]').type('Created by E2E test');
       cy.get('input[name="dateTime"]').type(dateTime);
-      // Adjust the location picker selector to match your app
       cy.get('app-location-picker input').type('Test Location');
       cy.get('select[name="category"]').select('Tech');
       cy.get('button[type="submit"]').click();

@@ -16,11 +16,6 @@ export class EventCreateComponent {
   private eventService = inject(EventService);
   private router = inject(Router);
 
-  // event-create.component.ts
-  constructor() {
-    console.log('📄 EventCreateComponent constructor');
-  }
-
   event = {
     title: '',
     description: '',

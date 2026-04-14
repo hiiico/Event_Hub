@@ -26,17 +26,15 @@ export class RegisterComponent implements OnInit, OnDestroy {
   error = '';
 
   ngOnInit(): void {
-    // Subscribe to loading state
+
     this.authService.loading$
       .pipe(takeUntil(this.destroy$))
       .subscribe(loading => this.loading = loading);
 
-    // Subscribe to error state
     this.authService.error$
       .pipe(takeUntil(this.destroy$))
       .subscribe(err => this.error = err || '');
 
-    // Navigate on successful registration
     this.authService.user$
       .pipe(takeUntil(this.destroy$))
       .subscribe(user => {
@@ -47,20 +45,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
   get passwordMismatch(): boolean {
     return this.password !== this.rePassword;
   }
-  // remove OnDestroy
-  // onSubmit() {
-  //   if (this.loading) return;
-  //   if (this.passwordMismatch) return;
-  //   this.loading = true;
-  //   this.error = '';
-  //   this.apiService.register(this.name, this.email, this.password).subscribe({
-  //     next: () => this.router.navigate(['/events']),
-  //     error: (err) => {
-  //       this.error = err.error?.message || 'Registration failed';
-  //       this.loading = false;
-  //     }
-  //   });
-  // }
 
   onSubmit() {
     if (this.loading) return;

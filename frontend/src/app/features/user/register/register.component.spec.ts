@@ -3,7 +3,7 @@ import { RegisterComponent } from './register.component';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { Router, ActivatedRoute } from '@angular/router';
-import { selectUser, selectAuthLoading, selectAuthError } from '../../../store/auth/selectors/auth.selectors';
+import { selectUser, selectAuthLoading, selectAuthError } from '../../../store';
 import { User } from '../../../shared/interfaces/user';
 
 describe('RegisterComponent', () => {

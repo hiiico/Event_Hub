@@ -26,7 +26,6 @@ describe('Auth Selectors', () => {
   });
 
   afterEach(() => {
-    // Reset all selectors to avoid state leakage between tests
     store?.resetSelectors();
   });
 
@@ -67,7 +66,6 @@ describe('Auth Selectors', () => {
   });
 
   it('should return false for isAuthenticated when user is null', () => {
-    // Override the user selector to return null
     store.overrideSelector(selectUser, null);
     store.refreshState();
     let result: boolean | undefined;

@@ -1,10 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {RouterLink, Router, NavigationEnd} from '@angular/router';
+import { RouterLink, Router, NavigationEnd } from '@angular/router';
+import { filter, Subscription } from 'rxjs';
 import { EventService } from '../../../core/services/event/event.service';
 import { EventCardComponent } from '../../../shared/components/event-card/event-card.component';
 import { Event } from '../../../shared/interfaces/event';
-import {filter} from 'rxjs';
 
 @Component({
   selector: 'app-my-events',
@@ -13,7 +13,7 @@ import {filter} from 'rxjs';
   templateUrl: './my-events.component.html',
   styleUrls: ['./my-events.component.css']
 })
-export class MyEventsComponent implements OnInit {
+export class MyEventsComponent implements OnInit, OnDestroy {
   createdEvents: Event[] = [];
   attendingEvents: Event[] = [];
   activeTab: 'created' | 'attending' = 'created';
@@ -24,19 +24,24 @@ export class MyEventsComponent implements OnInit {
   deleting = false;
   cancelling = false;
 
+  private routerSubscription: Subscription | undefined;
+
   constructor(
     private eventService: EventService,
     private router: Router,
     private cdr: ChangeDetectorRef
-  ) {  this.router.events.pipe(
-    filter(event => event instanceof NavigationEnd && event.url === '/my-events')
-  ).subscribe(() => {
-    this.loadAttendingEvents();
-  });}
+  ) {}
 
   ngOnInit(): void {
     this.loadCreatedEvents();
     this.loadAttendingEvents();
+
+    // Reload attending events when navigating back to this page (e.g., after RSVP toggling in details)
+    this.routerSubscription = this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd && event.url === '/my-events')
+    ).subscribe(() => {
+      this.loadAttendingEvents();
+    });
   }
 
   loadCreatedEvents() {
@@ -106,9 +111,12 @@ export class MyEventsComponent implements OnInit {
       },
       error: (err) => {
         console.error('Failed to cancel RSVP:', err);
-        // alert('Failed to cancel RSVP. Please try again.');
         this.cancelling = false;
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.routerSubscription?.unsubscribe();
   }
 }

@@ -36,7 +36,6 @@ export class AuthEffects {
     )
   );
 
-  // After successful login/register, fetch the current user
   loadUserAfterAuth$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.loginSuccess, AuthActions.registerSuccess),
@@ -56,7 +55,6 @@ export class AuthEffects {
     )
   );
 
-  // Redirect after successful login/register
   redirectAfterAuth$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -66,7 +64,6 @@ export class AuthEffects {
     { dispatch: false }
   );
 
-  // Logout effect – clear storage and navigate
   logout$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -80,7 +77,6 @@ export class AuthEffects {
     { dispatch: false }
   );
 
-  // Update user
   updateUser$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.updateUser),
@@ -95,7 +91,6 @@ export class AuthEffects {
     )
   );
 
-  // auto‑clear success after 3 seconds
   clearUpdateSuccess$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.updateUserSuccess),

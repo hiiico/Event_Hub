@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed} from '@angular/core/testing';
 import { EventCatalogComponent } from './event-catalog.component';
 import { EventService } from '../../../core/services/event/event.service';
 import { GeolocationService } from '../../../core/services/geolocation/geolocation.service';
@@ -59,7 +59,6 @@ describe('EventCatalogComponent', () => {
     eventServiceMock.getAllEvents.and.returnValue(of(mockEventsPage));
     fixture.detectChanges();
     component.onFiltersChanged({ search: 'Concert', category: '' });
-    // Because we removed debouncing for test simplicity, we can check immediately
     expect(component.filteredEvents.length).toBe(1);
     expect(component.filteredEvents[0].title).toBe('Concert');
   });

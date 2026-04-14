@@ -25,18 +25,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   private store = inject(Store);
   private authService = inject(AuthService);
 
-  // remove OnDestroy
-  // private authService = inject(AuthService);
-  // ngOnInit(): void {
-  //   this.authService.user$.subscribe(user => {
-  //     if (user) {
-  //       this.user = { ...user };
-  //     }
-  //   });
-  // }
-
   ngOnInit(): void {
-    // Subscribe to user from store
+
     this.store.select(selectUser)
       .pipe(takeUntil(this.destroy$))
       .subscribe(user => {
@@ -45,12 +35,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }
       });
 
-    // Subscribe to loading state
     this.store.select(selectAuthLoading)
       .pipe(takeUntil(this.destroy$))
       .subscribe(loading => this.loading = loading);
 
-    // Subscribe to error state
     this.store.select(selectAuthError)
       .pipe(takeUntil(this.destroy$))
       .subscribe(error => {
@@ -61,16 +49,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }
       });
 
-    // listening to updateSuccess
     this.store.select(selectUpdateSuccess)
       .pipe(takeUntil(this.destroy$))
       .subscribe(success => {
         if (success) {
           this.successMessage = 'Profile updated successfully';
-          // Optionally auto-clear message after delay (but effect clears flag)
         }else {
-          // When success flag becomes false (after clear), you might also clear the message,
-          // but we want the message to disappear. So we can set successMessage = '' here.
           this.successMessage = '';
         }
       });
@@ -86,31 +70,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
       });
   }
 
-  // onSubmit() {
-  //   if (this.loading) return;
-  //   this.loading = true;
-  //   this.successMessage = '';
-  //   this.errorMessage = '';
-  //
-  //   this.authService.updateUser({ name: this.user.name, email: this.user.email }).subscribe({
-  //     next: (updatedUser) => {
-  //       this.user = updatedUser;
-  //       this.successMessage = 'Profile updated successfully';
-  //       this.loading = false;
-  //     },
-  //     error: (err) => {
-  //       this.errorMessage = err.error?.message || 'Failed to update profile';
-  //       this.loading = false;
-  //     }
-  //   });
-  // }
-
   onSubmit() {
     if (this.loading) return;
     this.successMessage = '';
     this.errorMessage = '';
 
-    // Dispatch update action
     this.store.dispatch(AuthActions.updateUser({
       name: this.user.name,
       email: this.user.email
