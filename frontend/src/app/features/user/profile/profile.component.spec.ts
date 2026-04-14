@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ProfileComponent } from './profile.component';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
-import { selectUser, selectAuthLoading, selectAuthError, selectUpdateSuccess } from '../../../store/auth/selectors/auth.selectors';
+import { selectUser, selectAuthLoading, selectAuthError, selectUpdateSuccess } from '../../../store';
 import { User } from '../../../shared/interfaces/user';
 
 describe('ProfileComponent', () => {
@@ -50,7 +50,6 @@ describe('ProfileComponent', () => {
     component.onSubmit();
     expect(store.dispatch).toHaveBeenCalled();
 
-    // Override selectors to simulate success
     store.overrideSelector(selectUpdateSuccess, true);
     store.overrideSelector(selectAuthLoading, false);
     store.overrideSelector(selectAuthError, null);

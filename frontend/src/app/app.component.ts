@@ -1,6 +1,5 @@
 import {Component, inject} from '@angular/core';
-import {RouterOutlet, RouterLink, Router} from '@angular/router';
-import { AsyncPipe } from '@angular/common';
+import {RouterOutlet, Router} from '@angular/router';
 import { AuthService } from './core/services/auth/auth.service';
 import {HeaderComponent} from './shared/components/header/header.component';
 import {FooterComponent} from './shared/components/footer/footer.component';
@@ -14,7 +13,7 @@ import {FooterComponent} from './shared/components/footer/footer.component';
 })
 export class AppComponent {
   private router = inject(Router);
-  constructor(public authService: AuthService) {}
+  private authService = inject(AuthService);
 
   logout() {
     this.authService.logout();

@@ -11,11 +11,16 @@ MONGO_PORT=$(python3 -c 'import socket; s=socket.socket(); s.bind(("",0)); print
 BACKEND_PID=""
 FRONTEND_PID=""
 
+# Ensure cleanup on exit (even if script fails or is interrupted)
 cleanup() {
     echo -e "${YELLOW}🧹 Cleaning up E2E environment...${NC}"
     kill ${BACKEND_PID} 2>/dev/null || true
     kill ${FRONTEND_PID} 2>/dev/null || true
+    pkill -f "ng serve" 2>/dev/null || true
+    sudo fuser -k 3000/tcp 2>/dev/null || true
+    sudo fuser -k 4200/tcp 2>/dev/null || true
     docker rm -f "${CONTAINER_NAME}" 2>/dev/null || true
+    echo -e "${GREEN}✅ Cleanup finished.${NC}"
 }
 trap cleanup EXIT
 

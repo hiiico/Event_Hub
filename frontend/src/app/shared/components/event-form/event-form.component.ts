@@ -26,13 +26,18 @@ export class EventFormComponent implements OnChanges {
   @Input() loading = false;
   @Input() error = '';
   @Output() submit = new EventEmitter<void>();
-  @Output() eventChange = new EventEmitter<any>();
 
   locationData: LocationData = {
     address: '',
     latitude: null,
     longitude: null
   };
+
+  isFormValid(): boolean {
+    return !!this.event.title.trim() &&
+      !!this.event.dateTime &&
+      !this.isPastDate();
+  }
 
   isPastDate(): boolean {
     if (!this.event.dateTime) return false;
@@ -52,16 +57,14 @@ export class EventFormComponent implements OnChanges {
   }
 
   onLocationChange(data: LocationData) {
-    // Update the event object directly
     this.event.location = data.address;
     this.event.latitude = data.latitude;
     this.event.longitude = data.longitude;
-    this.eventChange.emit(this.event);
   }
 
   onSubmit() {
     if (this.loading) return;
-    if (this.isPastDate()) return;
+    if (!this.isFormValid()) return;
     this.submit.emit();
   }
 

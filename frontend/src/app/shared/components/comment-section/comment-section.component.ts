@@ -15,7 +15,7 @@ import { Comment } from '../../interfaces/comment';
 })
 export class CommentSectionComponent {
   @Input() comments: Comment[] = [];
-  @Input() eventId = '';  // ← This receives the event ID
+  @Input() eventId = '';
   @Output() commentAdded = new EventEmitter<Comment>();
 
   newComment = '';

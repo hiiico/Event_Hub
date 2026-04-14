@@ -28,45 +28,18 @@
 
 ### Quick Start commands
 
-#### MongoDB instance running locally:
-
-```bash
-docker run -d -p 27017:27017 --name mongodb-local mongo:7
-```
-
-#### Backend:
-
-> Option A: Create `backend/src/main/resources/application-dev.properties`
-```properties
-spring.data.mongodb.uri=mongodb://localhost:27017/eventhub_dev
-jwt.secret=mySecretKeyForJWTGenerationShouldBeLongEnough12345
-```
-
->Option B: Use environment variables
-
-```bash
-export SPRING_DATA_MONGODB_URI=mongodb://localhost:27017/eventhub_dev
-export JWT_SECRET=mySecretKeyForJWTGenerationShouldBeLongEnough12345
-```
-
-Then run
-
-```bash
-cd backend
-./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
-```
-The API will be available at [http://localhost:3000](http://localhost:3000).
-
-- Backend detailed setup in [backend/README.md](backend/README.md#running-locally).
-
 #### Frontend:
+
+If you already have a backend running (e.g., the Azure demo backend or your own instance), you can run the frontend alone.
+> Point to your own backend by editing `src/environments/environment.ts`.
+> Change apiUrl to your backend URL (e.g., 'http://localhost:3000/api')
 
 ```bash
 cd frontend
 npm install
 npm start
 ```
-The API will be available at [http://localhost:4200](http://localhost:4200).
+The frontend will be available at [http://localhost:4200](http://localhost:4200).
 
 - Frontend detailed setup in [frontend/README.md](frontend/README.md#running-locally).
 
@@ -81,10 +54,14 @@ The backend is already running on Azure, and the frontend is hosted as a static 
 
 ---
 
-### 2. Fork the repo and run locally (full development mode)
+### 2. Full local development (recommended for active development)
 
 ```bash
-cd ../
+# Clone the repository
+git clone https://github.com/hiiico/Event_Hub.git
+cd Event_Hub
+
+# Run the all‑in‑one script
 ./local-dev.sh
 ```
 
@@ -99,6 +76,9 @@ The script will:
 - Press `Ctrl+C` to stop – the MongoDB container stops automatically (data is kept for next run).
 
 > Requirements: Docker, Java 17, Maven, Node.js 20, Angular CLI.
+
+The backend be available at [http://localhost:3000](http://localhost:3000).
+The frontend be available at [http://localhost:4200](http://localhost:4200).
 
 ---
 
@@ -147,7 +127,7 @@ docker-compose down -v
 
 - Frontend: http://localhost:4200
 
-- Backend API: http://localhost:3000
+- Backend: http://localhost:3000
 
 - MongoDB: internal mongodb://mongodb:27017/eventhub
 
@@ -235,9 +215,9 @@ Prerequisites:
 
 - Backend running on `http://localhost:3000` (e.g., `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev`)
 
-Frontend running on `http://localhost:4200` (e.g., ng serve)
+- Frontend running on `http://localhost:4200` (e.g., ng serve)
 
-The frontend’s `environment.ts` must point to the backend URL (`http://localhost:3000/api` – default for `ng serve`)
+- The frontend’s `environment.ts` must point to the backend URL (`http://localhost:3000/api` – default for `ng serve`)
 
 Run Cypress:
 

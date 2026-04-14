@@ -22,6 +22,6 @@ describe('EventSearchComponent', () => {
     setTimeout(() => {
       expect(component.filtersChanged.emit).toHaveBeenCalledWith({ search: 'jazz', category: '' });
       done();
-    }, 400); // > 300ms debounce
+    }, 400);
   });
 });

@@ -80,6 +80,12 @@
   white-space: nowrap;
 }
 
+.home-hero__image {
+  font-size: 8rem;
+  color: var(--accent);
+  opacity: 0.6;
+}
+
 .hero__buttons {
   grid-column: 3;
   width: 200px; /* fixed width to reserve space */
@@ -130,7 +136,8 @@
     text-align: center;
     gap: 1rem;
   }
-  .hero__graphic,
+
+  .hero-hero__image,
   .hero__buttons {
     justify-self: center;
   }

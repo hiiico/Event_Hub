@@ -38,17 +38,4 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
-
-  // replace implements OnInit, OnDestroy
-  // onSubmit() {
-  //   if (this.loading) return;
-  //   this.loading = true;
-  //   this.authService.login(this.email, this.password).subscribe({
-  //     next: () => this.router.navigate(['/events']),
-  //     error: () => {
-  //       this.error = 'Invalid credentials';
-  //       this.loading = false;
-  //     }
-  //   });
-  // }
 }

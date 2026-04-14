@@ -10,7 +10,6 @@ describe('GeolocationService', () => {
   });
 
   it('should calculate distance correctly', () => {
-    // Berlin to Paris: about 877 km
     const berlin = { lat: 52.5200, lon: 13.4050 };
     const paris = { lat: 48.8566, lon: 2.3522 };
     const distance = service.calculateDistance(berlin.lat, berlin.lon, paris.lat, paris.lon);

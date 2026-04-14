@@ -125,7 +125,6 @@ export class LocationPickerComponent implements ControlValueAccessor {
       latitude: this.latitude,
       longitude: this.longitude
     };
-    console.log('📡 Emitting location data:', value);
     this.onChange(value);
   }
 
